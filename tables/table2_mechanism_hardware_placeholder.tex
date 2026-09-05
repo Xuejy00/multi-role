@@ -1,0 +1,44 @@
+\begin{table*}[t!]
+  \centering
+  \caption{Compact mechanism and real-robot evidence. Block (a) isolates
+  selective continuation (A3) and same-batch evidence compatibility (A4).
+  Block (b) summarizes the heterogeneous-directive (H1) and runtime-event
+  continuation (H2) properties on two Franka manipulators and one
+  vehicle-mounted manipulator. A dash marks an inapplicable metric; every
+  \textbf{***} entry is an unmeasured placeholder.}
+  \label{tab:mechanism_hardware_results}
+  \small
+  \renewcommand{\arraystretch}{1.12}
+
+  \textbf{(a) Selective-continuation and stale-evidence conformance}\par\vspace{2pt}
+  \setlength{\tabcolsep}{7.0pt}
+  \begin{tabular}{lcccc}
+    \toprule
+    Configuration &
+    \shortstack{Affected coverage\\(\%) $\uparrow$} &
+    \shortstack{Preserved continuation\\(\%) $\uparrow$} &
+    \shortstack{Stale completion\\accepted (\%) $\downarrow$} &
+    \shortstack{Compatible completion\\rejected (\%) $\downarrow$} \\
+    \midrule
+    Proposed coordination             & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    A3: No selective continuation     & \textbf{***} & \textbf{***} & -- & -- \\
+    A4: No evidence compatibility     & -- & -- & \textbf{***} & \textbf{***} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{5pt}
+  \textbf{(b) Compact real-robot summary}\par\vspace{2pt}
+  \setlength{\tabcolsep}{4.0pt}
+  \begin{tabular}{lccccc}
+    \toprule
+    Property & Trials &
+    \shortstack{Obligation success\\(\%) $\uparrow$} &
+    \shortstack{Event-to-directive\\latency (s) $\downarrow$} &
+    \shortstack{Unaffected continuation\\(\%) $\uparrow$} &
+    \shortstack{Directive-compliance\\violations $\downarrow$} \\
+    \midrule
+    H1: Heterogeneous directive execution & \textbf{***} & \textbf{***} & -- & -- & \textbf{***} \\
+    H2: Runtime event and continuation    & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

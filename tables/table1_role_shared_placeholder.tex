@@ -1,0 +1,33 @@
+\begin{table*}[t!]
+  \centering
+  \caption{Role-shared semantic coordination and heterogeneous capability
+  grounding. Lower is better for violation, divergence, invalid-proposal, and
+  invalid-assignment rates; higher is better for feasible-assignment recall.
+  B1 is the monolithic central coordinator, B2 uses per-actuator semantic
+  replicas, A1 removes unique write authority, and A2 removes capability
+  grounding. Every \textbf{***} entry is an unmeasured placeholder and encodes
+  no result.}
+  \label{tab:role_shared_results}
+  \setlength{\tabcolsep}{2.8pt}
+  \renewcommand{\arraystretch}{1.12}
+  \small
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lcccccc}
+    \toprule
+    Method &
+    \shortstack{Semantic\\violations (\%) $\downarrow$} &
+    \shortstack{Replica\\divergence (\%) $\downarrow$} &
+    \shortstack{Invalid\\proposals (\%) $\downarrow$} &
+    \shortstack{Origin\\inconsistency (\%) $\downarrow$} &
+    \shortstack{Capability-invalid\\assignments (\%) $\downarrow$} &
+    \shortstack{Feasible-assignment\\recall (\%) $\uparrow$} \\
+    \midrule
+    Proposed                           & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    B1: Monolithic central             & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    B2: Per-actuator replicas          & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    \midrule
+    A1: No write authority            & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    A2: No capability grounding       & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    \bottomrule
+  \end{tabular}}
+\end{table*}
