@@ -1,0 +1,214 @@
+\providecommand{\experimentcolor}{}
+\experimentcolor
+\section{Experiments}
+\label{sec:experiments}
+
+We evaluate the two paper-level contributions through three compact evidence
+blocks. The first tests whether role-owned authoritative semantics improves
+coherence and capability-valid decisions. The second isolates affected-scope
+semantic re-entry at matched event boundaries and separately tests the
+same-batch evidence rule. The third evaluates the complete
+$S^{\mathrm{sem}}\!\rightarrow c_v\rightarrow\kappa_v\rightarrow
+y_i^{\mathrm{exec}}\rightarrow\mathbf e_k\rightarrow D_k$ chain in simulation
+and on a heterogeneous physical team. Dynamic-target execution is used only as
+one local physical condition; it is not evaluated as a separate contribution.
+
+\subsection{Experimental Setup}
+\label{sec:experiment_setup}
+
+\noindent\textbf{Simulation and events.}
+The simulation study uses the heterogeneous checkout workspace in
+Figure~\ref{fig:scenario}: two Franka arms with parallel grippers, two suction
+actuators, global RGB-D sensing, Franka wrist RGB-D sensing, and a conveyor.
+Task instances comprise independent and dependent semantic obligations whose
+admissible actuators differ by declared end-effector, sensing, public-skill,
+target-support, and workspace properties. Each trial receives a frozen schedule
+of scene, task, and verification event batches. Persistent target motion and
+controller-rate visual updates remain physical variables and do not themselves
+create semantic events. Methods are paired on identical task, observation,
+event, and random seeds. We use \textbf{***} task instances and \textbf{***}
+repetitions per stochastic condition; the finite same-batch conformance matrix
+is evaluated exhaustively.
+
+\noindent\textbf{Comparators and ablations.}
+For semantic organization, B1 is a monolithic central semantic coordinator
+with the same shared store, capability input, validator, compiler, and local
+execution stack, but without role-owned field deltas. B2 gives each actuator a
+complete semantic replica and applies the same declared conflict rule and
+dispatch deadline. For multi-timescale coordination, B3 uses the same semantic
+event boundaries as the proposed method but revalidates every eligible active
+or future obligation. B3 remains continuation-capable whenever local guards
+hold, so the comparison isolates affected semantic scope rather than global
+stopping. A1 removes unique write authority, A2 withholds capability facts from
+assignment, A3 holds every active directive during semantic processing, and A4
+accepts old-directive evidence without the same-batch compatibility test.
+Periodic global replanning, global quiescence, and the broader visual-robustness
+sweep are reported in the supplementary material.
+
+\noindent\textbf{Metrics and statistics.}
+A \emph{semantic violation} is a committed state or active directive that
+breaks the role-ownership or origin-consistency invariant in
+Eq.~\eqref{eq:role_shared_invariant}. \emph{Replica divergence} is the fraction
+of semantic event boundaries at which B2 replicas disagree on an obligation's
+target, actuator, public skill, or status. An assignment is
+\emph{capability-invalid} when its actuator is outside the admissible set
+computed from the frozen profile and scene facts; feasible-assignment recall is
+the fraction of instances with a nonempty admissible set for which the method
+emits a valid assignment. For an event, \emph{affected coverage} is
+$|\widehat{\mathcal V}^{\mathrm{aff}}_k\cap
+\mathcal V^{\mathrm{aff},*}_k|/|\mathcal V^{\mathrm{aff},*}_k|$, and
+\emph{excess reconsideration} is
+$|\widehat{\mathcal V}^{\mathrm{aff}}_k\setminus
+\mathcal V^{\mathrm{aff},*}_k|$ normalized by the obligations outside the
+oracle set. The \emph{preserved-continuation ratio} is the eligible execution
+time of unaffected active directives that remains unsuppressed during semantic
+processing, divided by their total eligible time in that interval. We also
+report event-to-commit latency and stale-completion acceptance. Proportions use
+95\% Wilson intervals; latency and count distributions use medians, interquartile
+ranges, and paired bootstrap 95\% confidence intervals.
+
+\noindent\textbf{Physical platform.}
+The real-robot team comprises two Franka manipulators and one vehicle-mounted
+manipulator. The verified mobile base, end-effectors, cameras, reachable
+workspaces, navigation stack, and supported public skills are \textbf{***}.
+Hardware uses the same directive and event schemas as simulation, while
+platform-specific local control and safety remain unchanged. Simulator-only
+state is retained only in separate evaluation logs for ground-truth scoring;
+the reported semantic and actuator-local decision paths use policy-visible
+visual observations and physically available robot-local state.
+
+\subsection{Role-Shared Semantic Coordination}
+\label{sec:exp_role_shared}
+
+We first ask whether explicit role-owned authority has an observable effect
+beyond centralizing state. In E1, the proposed method, B1, and B2 process the
+same mixed traces containing isolated and concurrent scene, task, and
+verification events. Candidate deltas and committed states are scored
+separately so that a common validator cannot hide invalid proposals. A1
+isolates unique field authority. E2 is embedded in the same benchmark: a finite
+capability matrix and scene-dependent cases change the admissible actuator set
+through gripper/suction compatibility, wrist sensing, public-skill support, and
+declared workspace constraints. A2 isolates capability grounding without
+altering downstream validation.
+
+Table~\ref{tab:role_shared_results} reports post-commit violations, invalid
+proposals, directive-origin inconsistency, capability-invalid assignments, and
+feasible-assignment recall. The proposed method records \textbf{***} semantic
+violations, compared with \textbf{***} for B1 and \textbf{***} for B2. Its
+capability-invalid assignment rate and feasible-assignment recall are
+\textbf{***} and \textbf{***}, respectively. B2 replica divergence is
+\textbf{***}. These paired measurements distinguish three possible outcomes:
+improved committed-state validity supports authoritative role ownership;
+fewer invalid proposals with similar committed validity supports a narrower
+traceability and validation-efficiency benefit; parity with B1 and B2 limits
+the role-sharing claim accordingly.
+
+\input{tables/table1_role_shared_placeholder.tex}
+
+\subsection{Multi-Timescale Semantic--Physical Coordination}
+\label{sec:exp_multi_timescale}
+
+E3 compares selective re-entry with B3 on obligation graphs containing
+independent branches, sparse cross-branch dependencies, and tightly coupled
+dependencies. We vary the fraction of obligations that is truly affected while
+holding event boundaries and evidence fixed. A scene change, task edit, or
+verification event occurs while at least one unrelated directive is locally
+admissible and active. Conveyor motion without a semantic event is included as
+a negative control. Figure~\ref{fig:selective_reentry_results} presents the
+three primary views: oracle-set coverage and excess scope, event-to-commit
+latency, and unaffected-work continuation or interruption.
+
+\begin{figure*}[t!]
+  \centering
+  \resizebox{0.98\textwidth}{!}{%
+    \input{figures/figure3_selective_reentry_placeholder.tex}}
+  \caption{Selective re-entry comparison at matched semantic event boundaries.
+  The panels report (a) oracle-affected coverage together with excess
+  reconsideration, (b) event-to-commit latency, and (c) preserved continuation
+  or policy-induced interruption of unaffected directives, for the proposed
+  method and continuation-capable B3. Markers and intervals summarize
+  paired trials. The \textbf{***} regions are layout placeholders and encode no
+  measured values or trends.}
+  \label{fig:selective_reentry_results}
+\end{figure*}
+
+Affected coverage is \textbf{***} for the proposed method and \textbf{***} for
+B3, while excess reconsideration is \textbf{***} and \textbf{***}. Median
+event-to-commit latency is \textbf{***}\,s versus \textbf{***}\,s, and the
+preserved-continuation ratio is \textbf{***} versus \textbf{***}. These
+quantities test selectivity jointly with correctness: fewer semantic calls or a
+smaller affected set is not supporting evidence if coverage, semantic validity,
+or event response degrades.
+
+E4 then exercises the stale-evidence rule using deterministic same-batch cases:
+old completion evidence is paired with target replacement, withdrawal,
+intended-effect change, an unrelated edit, no defining-field edit, ambiguity,
+and failure. Table~\ref{tab:mechanism_hardware_results}(a) combines this test
+with A3 and A4. The observed stale-completion acceptance and
+compatible-completion rejection rates are \textbf{***} and \textbf{***}; A4
+records \textbf{***} and \textbf{***}. A3 preserves \textbf{***} of eligible
+unaffected execution. This block tests that the method rejects incompatible
+certification without obtaining apparent safety by rejecting all old evidence.
+
+\input{tables/table2_mechanism_hardware_placeholder.tex}
+
+\subsection{Integrated Simulation and Real-Robot Validation}
+\label{sec:exp_integrated}
+
+\noindent\textbf{Integrated semantic--physical execution.}
+E5 evaluates the complete runtime chain rather than a moving-target controller.
+For each active directive, the trace records $v$, $q_v$, $a(v)$,
+$\kappa_v$, $\psi_v$, and $\nu_v$ while visual estimates, local trajectories,
+waiting, and reacquisition evolve between semantic boundaries. Pre-registered
+event schedules contain one affected obligation, one unrelated valid active
+directive, bounded execution evidence, and a same-batch old-evidence/task-edit
+case across the schedule family. A changed semantic commitment must produce a
+new directive instead of mutating $c_v$; local target rebinding, actuator
+reassignment, public-skill substitution, semantic writes, and origin-version
+inconsistency are counted as violations.
+
+Figure~\ref{fig:integrated_execution_trace} aligns the semantic version,
+directive fields, local execution state, evidence, affected-set membership, and
+$D_k$ on one clock. Across \textbf{***} simulation trials, obligation success
+is \textbf{***}, the preserved-continuation ratio is \textbf{***}, and the
+aggregate directive-compliance violation count is \textbf{***}. Event-level
+evidence leads to a revised directive after \textbf{***}\,s. Physical success
+alone is not sufficient: this experiment supports integration only when the
+same traces also preserve directive identity and apply dispositions to the
+correct affected scope.
+
+\begin{figure*}[t!]
+  \centering
+  \resizebox{0.98\textwidth}{!}{%
+    \input{figures/figure4_integrated_trace_placeholder.tex}}
+  \caption{Integrated semantic--physical trace and matched real-robot sequence.
+  Panel (a) aligns the piecewise-constant semantic state, fixed fields of an
+  active directive, continuously evolving local execution, bounded evidence,
+  affected-set membership, and directive disposition at $\tau_k$. Panel (b)
+  contains slots for synchronized frames from the two Franka manipulators and the
+  vehicle-mounted manipulator. All \textbf{***} entries are placeholders; the
+  diagram specifies the final trace layout without implying an outcome or
+  duration.}
+  \label{fig:integrated_execution_trace}
+\end{figure*}
+
+\noindent\textbf{Real-robot validation.}
+One compact physical scenario family tests two properties that simulation
+cannot establish alone. H1 evaluates whether verified capability differences
+among the two Frankas and the vehicle-mounted manipulator produce valid,
+concurrently executable directives. H2 introduces a safe reproducible event
+that affects one obligation while another directive remains locally admissible;
+the affected work re-enters semantic coordination and any changed commitment
+receives a replacement directive. Hardware does not repeat the simulation
+baseline matrix and does not disable local safety or collision protection.
+
+Table~\ref{tab:mechanism_hardware_results}(b) reports all \textbf{***} physical
+trials. Obligation success is \textbf{***}, event-to-revised-directive latency
+is \textbf{***}\,s, unaffected continuation is \textbf{***}, and the aggregate
+directive-compliance violation count is \textbf{***}. The quantitative rows and
+the synchronized sequence in Figure~\ref{fig:integrated_execution_trace}
+jointly test physical feasibility, heterogeneous authorization, bounded
+evidence return, and selective continuation. They do not attribute novelty to
+visual servoing, navigation, motion planning, or manipulation control.
+
+\normalcolor

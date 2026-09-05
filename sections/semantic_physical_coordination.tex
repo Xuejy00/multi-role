@@ -1,0 +1,277 @@
+\providecommand{\structurechange}[1]{#1}
+\providecommand{\formalchange}[1]{#1}
+\providecommand{\finalchange}[1]{#1}
+\providecommand{\localexecchange}[1]{#1}
+\subsection{\structurechange{Multi-Timescale Semantic--Physical Coordination}}
+\label{sec:semantic_physical_coordination}
+
+\structurechange{This subsection presents the second coordination component:
+when semantic authority should enter or re-enter physical execution that may
+evolve faster than semantic reasoning.} The mechanism starts from the versioned bounded
+\structurechange{Committed Execution Directive $c_v$} in
+Section~\ref{sec:local_execution}, keeps controller and perception state
+local between semantic events, and revalidates only the obligations exposed by
+an event. Fold II is therefore an operational coordination mechanism,
+\structurechange{not merely the execution boundary}: it routes typed events,
+constructs their affected scope, arbitrates concurrent updates, and assigns a
+disposition to each active \structurechange{directive}.
+
+\subsubsection{\structurechange{Event Transactions}}
+
+\formalchange{The semantic update operator acts only at event boundaries. If
+the transaction at $\tau_k$ commits $S^{\mathrm{sem}}_{\nu+1}$ and no further
+semantic event occurs before $\tau_{k+1}$, then
+$S^{\mathrm{sem}}(t)=S^{\mathrm{sem}}_{\nu+1}$ for
+$t\in(\tau_k,\tau_{k+1})$, while $x^{\mathrm{phys}}(t)$ continues to evolve
+under directives that retain execution authority and under local guards
+according to Eq.~\eqref{eq:physical_evolution}. Raw controller and perception
+samples do not enter $U$ merely because physical time advances.}
+
+\finalchange{At $\tau_k$, the method applies four conceptual stages. First,
+role-owned interpretation maps scene records to an Affordance delta $d_A$,
+direct task edits to a Planning delta $d_P^{\mathrm{task}}$, and event-level
+execution evidence to a candidate Verification delta $d_V$. Records within each
+role are ordered by event time and stable event identity and are interpreted
+from the same committed state. Second, after applying the compatibility rule
+below to any completion component, the admissible, disjoint role-owned deltas
+merge atomically into an intermediate state $\bar S_k$, with footprint
+$\chi_k=\chi(d_A)\cup\chi(d_P^{\mathrm{task}})\cup\chi(d_V)$; an absent event
+type contributes an empty delta. Third, the affected scope is constructed from
+that footprint, direct task edits, verification source obligations, and their
+dependency consumers. Against $\bar S_k$, the same Planning Role revalidates or
+repairs only this scope and only its owned fields. Thus, direct task
+interpretation first changes Planning-owned fields, and affected-scope
+revalidation uses the combined role-owned changes without introducing a second
+planner. Fourth, the resulting state is committed as
+$S^{\mathrm{sem}}_{\nu+1}$, after which the method assigns dispositions to
+previously active directives and dispatches any new or replacement directive
+from the new state rather than mutating an old directive in place.}
+
+\finalchange{A same-batch task edit constrains whether older execution evidence
+may certify completion. Let
+$\operatorname{compat}_k(c_v)$ mean that the obligation definition obtained
+after applying $d_P^{\mathrm{task}}$ retains the target identity, intended
+semantic effect, and other task-defining semantic fields authorized by $c_v$ in
+its originating state.
+A Verification-owned completion update bound to $c_v$ is admissible only when
+$v$ is not withdrawn and $\operatorname{compat}_k(c_v)$ holds. Otherwise, the
+evidence remains valid execution history and may record what physically
+occurred, but it cannot set the revised obligation to complete. This check is
+applied before the completion component of $d_V$ enters the intermediate merge,
+so disjoint write domains cannot combine a newly edited obligation with stale
+completion status. Typed records retain one transaction identifier; role
+ownership resolves cross-role writes, and a stable per-role fold resolves
+concurrent same-role writes.}
+
+\subsubsection{\structurechange{Affected-Obligation Construction}}
+
+\structurechange{For each obligation $v$, let $\operatorname{req}(v)$ collect
+the semantic facts read by its target binding, capability requirements,
+preconditions, intended effect, and semantic guards. Let
+$\mathcal{V}^{\mathrm{edit}}_k$ be the directly edited obligations, and let
+$\mathcal{V}^{\mathrm{src}}_k$ contain the source obligation named by a
+verification event. The Planning Role constructs the direct seed set}
+\begin{equation}
+\structurechange{\mathcal{B}_k=
+\mathcal{V}^{\mathrm{edit}}_k\cup\mathcal{V}^{\mathrm{src}}_k
+\cup\{v:\operatorname{req}(v)\cap\chi_k\neq\varnothing\}.}
+\label{eq:affected_seed}
+\end{equation}
+\formalchange{Equation~\eqref{eq:affected_seed} combines the three direct
+sources of affected work.} \structurechange{It then computes the
+dependency-consumer closure}
+\begin{equation}
+\structurechange{\mathcal{V}^{\mathrm{aff}}_k=
+\mathcal{B}_k\cup
+\operatorname{Reach}^{+}_{G^-\cup G^+}(\mathcal{B}_k),}
+\label{eq:affected_set}
+\end{equation}
+\structurechange{where $G^-$ and $G^+$ are the graphs before and after the
+\formalchange{direct task edit}. Their union preserves dependency paths that
+the \formalchange{edit} adds or removes.} \formalchange{The operator
+$\operatorname{Reach}^{+}_{G^-\cup G^+}(\mathcal B_k)$ follows edges from each
+seed to downstream obligations that consume its semantic effect.}
+\structurechange{Scene events seed obligations that read changed identity,
+affordance, or capability facts; task events seed added, withdrawn, or modified
+obligations; and verification events seed the evidenced obligation.
+Equation~\eqref{eq:affected_set} also includes consumers of their semantic
+effects. This is a conservative causal scope, not an optimal or globally
+minimal repair claim. The Planning Role owns this construction because it owns
+$G$ and assignment, but it cannot alter the Affordance or Verification deltas
+that supplied the footprint. Any repair is evaluated against $\bar S_k$ and
+committed only to Planning-owned fields before the transaction publishes its
+final version.}
+
+\subsubsection{\structurechange{Directive Dispositions and Selective Semantic Re-Entry}}
+
+\formalchange{Let $\mathcal{D}^{\mathrm{act}}_k=\{c_v\mid c_v\text{ retains
+execution authority at }\tau_k\}$ denote the active committed directives
+visible at the event boundary. The bounded execution context supplied to the
+disposition stage is}
+\begin{equation}
+\finalchange{\mathcal{C}^{\mathrm{exec}}_k=
+\{(c_v,\sigma^{\mathrm{guard}}_{v,k})
+  \mid c_v\in\mathcal{D}^{\mathrm{act}}_k\},}
+\label{eq:execution_context}
+\end{equation}
+\finalchange{where $\sigma^{\mathrm{guard}}_{v,k}$ is a bounded local
+admissibility certificate for execution and safety guards, not raw physical
+state. Equation~\eqref{eq:execution_context} contains active directive
+identities and bounded guard certificates; each originating version $\nu_v$ is
+read from the corresponding $c_v$ in Eq.~\eqref{eq:committed_directive}. The
+context contains no trajectory, controller state, tracking state, servo target,
+per-tick target, low-level gain, or raw sensor stream. Event-level evidence is
+carried by $\mathbf e_k$, so the complete event update is}
+\begin{equation}
+\formalchange{U(S^{\mathrm{sem}}_{\nu},\mathbf{e}_k,
+\mathcal{C}^{\mathrm{exec}}_k)
+=\left(S^{\mathrm{sem}}_{\nu+1},
+       \mathcal{V}^{\mathrm{aff}}_k,D_k\right).}
+\label{eq:semantic_update}
+\end{equation}
+\formalchange{The semantic delta merge in Eq.~\eqref{eq:semantic_update}
+depends on $S^{\mathrm{sem}}_{\nu}$ and $\mathbf e_k$; the bounded execution
+context is consulted only to assign dispositions to existing commitments. It
+does not grant the semantic layer access to controller-rate state.}
+
+\formalchange{For every active committed directive, the transaction records}
+\begin{equation}
+\formalchange{D_k:\mathcal{D}^{\mathrm{act}}_k\rightarrow
+\{\textsc{complete},\textsc{continue},
+  \textsc{hold},\textsc{revoke}\}.}
+\label{eq:directive_disposition}
+\end{equation}
+\formalchange{Equation~\eqref{eq:directive_disposition} acts on execution
+authority. In contrast, $z$ is the Verification-owned semantic status of an
+obligation: it records whether the intended effect is verified, semantically
+complete, failed, or requires reconsideration. The map $D_k$ neither writes nor
+duplicates $z$ and is not a workflow scheduler; at $\tau_k$, it answers whether
+each existing directive may continue, must enter a bounded hold, loses
+authority, or is retired after verified completion. The transaction derives
+$D_k$ from role-owned semantic fields, the originating version $\nu_v$, and the
+bounded guard certificate.}
+
+\finalchange{The disposition priority is deterministic. A withdrawn
+obligation, or a directive that conflicts with the final target, assignment,
+skill, or semantic guards, is \textsc{revoke}. An unchanged intended effect
+accepted by the Verification Role from evidence bound to $c_v$ and $\nu_v$ is
+\textsc{complete} only if $\operatorname{compat}_k(c_v)$ holds. A
+directive whose authorizing semantic fields and guards remain valid is
+\textsc{continue}. An unresolved affected directive is \textsc{hold} only when
+a bounded safe local hold remains admissible; otherwise it is \textsc{revoke}.
+Actuator-local and team resource or safety guards are non-overridable, so a
+failed guard prevents continuation even when semantic fields are unchanged.}
+
+\formalchange{These outcomes define the post-update directive lifecycle.
+\textsc{Continue} retains the existing $c_v$ without changing its originating
+version $\nu_v$, even though the authoritative state has advanced to
+$S^{\mathrm{sem}}_{\nu+1}$; continuation states that the fields authorizing that
+directive remain valid under the new state. \textsc{Hold} retains the directive
+identity but temporarily bounds execution authority at a safe local hold; it
+does not complete, reassign, retarget, or recommit the obligation.
+\textsc{Revoke} removes the old directive's execution authority and retires it
+to execution history. \textsc{Complete} retires the originating directive only
+after Verification accepts its intended semantic effect under the current
+semantic interpretation and records the corresponding status in $z$. If
+Planning changes the obligation definition, target, assignment, bounded skill,
+or relevant semantic guard, the old directive is never mutated in place;
+Planning may instead issue a new or replacement directive $c'_v$ from the newly
+committed version $\nu+1$ according to Eq.~\eqref{eq:committed_directive}.}
+
+\formalchange{A directive $c_v\in\mathcal D_k^{\mathrm{act}}$ whose obligation
+lies outside $\mathcal{V}^{\mathrm{aff}}_k$ receives \textsc{continue} by
+default when its authorizing semantic fields and local guards remain valid.}
+An obligation inside the set is
+not automatically cancelled: revalidation may preserve it, while changed or
+unresolved commitments cause hold or revocation. Large-model reasoning can
+therefore re-enter only through the role whose semantic evidence or authority is
+needed. A scene event reactivates Affordance interpretation; a task edit or an
+invalidated plan field reactivates Planning; completion or failure evidence
+reactivates Verification. The graph closure and unchanged-field checks remain
+deterministic coordination operations and do not require controller-rate model
+calls.
+
+This mechanism does not assume that minimal semantic intervention or maximal
+continuation is always preferable. It fixes which obligations must be examined,
+which role may change each semantic field, and which bounded dispositions are
+available. \localexecchange{The final subsection explains the complementary
+between-event operation: how an unchanged directive governs vision-driven
+actuator-local skill execution while its physical realization continues to
+evolve.}
+
+\subsection{\localexecchange{Directive-Governed Actuator-Local Execution}}
+\label{sec:actuator_local_execution}
+
+\localexecchange{Section~\ref{sec:role_shared_coordination} defines and
+authorizes $c_v$, while Section~\ref{sec:semantic_physical_coordination}
+determines its disposition at semantic event boundaries. Between those
+boundaries, the assigned actuator consumes $c_v$ by executing the selected
+public skill $\kappa_v$ from current policy-visible RGB or RGB-D observations
+and conventional actuator-local closed-loop control.}
+
+\begin{equation}
+\localexecchange{u_i(t)=\pi_i\!\left(o_i^{\mathrm{vis}}(t),c_v\right),}
+\label{eq:local_skill_realization}
+\end{equation}
+\localexecchange{Equation~\eqref{eq:local_skill_realization} expresses this
+realization without prescribing a controller. Here, $u_i(t)$ is the actuator
+command used in Eq.~\eqref{eq:physical_evolution}, $\pi_i$ is the
+actuator-local realization of the public skill authorized by $\kappa_v$, and
+$o_i^{\mathrm{vis}}(t)$ collects current policy-visible RGB or RGB-D
+measurements, visual tracking and image-space errors, depth-derived geometry,
+and physically available robot-local state. The input $c_v$ is the semantic
+commitment in Eq.~\eqref{eq:committed_directive}. Thus, the semantic layer fixes
+the obligation, actuator, and skill, whereas local execution determines their
+physical realization. In particular, $c_v\neq u_i(t)$: a directive is not a
+trajectory, control command, or low-level actuator reference.}
+
+\localexecchange{The directive fixes the obligation, semantic target, assigned
+actuator, public skill, guards, originating version, and intended effect. Local
+execution may instead update visual estimates and errors, tracking and
+grasp-relative state, trajectory and servo correction, waiting or reacquisition,
+contact observations, and controller state. It may change how $\kappa_v$ is
+physically realized, but it may not rebind $q_v$, substitute another public
+skill, transfer the obligation, or write semantic status $z$. Any such semantic
+change requires re-entry through III-B.}
+
+\localexecchange{The local skill continuously enforces its execution, resource,
+and safety conditions. At $\tau_k$, it summarizes the relevant locally
+observable validity as the bounded certificate
+$\sigma^{\mathrm{guard}}_{v,k}$ in
+Eq.~\eqref{eq:execution_context}. The semantic layer receives this certificate
+and bounded event-level evidence, not raw images, per-frame visual errors,
+trajectories, servo commands, low-level gains, or complete tracking and
+controller state. Local execution is vision-driven: it does not consume
+simulator ground-truth object pose or velocity, commanded conveyor velocity,
+future target trajectories, hidden physics state, or oracle reachability.
+Target motion, when required, is estimated visually from successive
+observations.}
+
+\localexecchange{Moving-PICK is one representative public-skill realization,
+not a method component or contribution. For a dynamic-target PICK directive,
+$q_v$ and $a(v)$ remain fixed while current RGB-D observations update the
+physical target estimate and target-relative execution state. Visual tracking,
+capture waiting, target-relative correction, and bounded reacquisition operate
+locally using established mechanisms~\cite{cuevas2018hybrid,
+haviland2020finalphase,liu2023target,maranci2026reactive}. Temporary visual loss
+may cause a bounded local wait or reacquisition; persistent loss, ambiguity,
+identity inconsistency, or failed physical interaction produces event-level
+evidence. No semantic reasoning is invoked at every perception or control
+step.}
+
+\begin{equation}
+\localexecchange{y_i^{\mathrm{exec}}(t)
+=\phi_i\!\left(o_i^{\mathrm{vis}}(t),u_i(t)\right),}
+\label{eq:execution_evidence}
+\end{equation}
+\localexecchange{In Eq.~\eqref{eq:execution_evidence}, $\phi_i$ is a local
+evidence-extraction map, not a semantic verifier. Its bounded output reports
+completion, failure, ambiguity, visual loss, contact rejection, or persistent
+local infeasibility under the active directive. The return path is
+$y_i^{\mathrm{exec}}\rightarrow\mathbf e_k\rightarrow
+U(S^{\mathrm{sem}}_{\nu},\mathbf e_k,\mathcal C^{\mathrm{exec}}_k)$ in
+Eq.~\eqref{eq:semantic_update}. A verification event carries the evidence to
+the Verification Role, which may update $z$ only when it remains semantically
+compatible; III-B determines $D_k$. The local execution layer assigns neither
+quantity. This realizes the physical half of Multi-Timescale Semantic--Physical
+Coordination without creating a third contribution.}

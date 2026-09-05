@@ -1,0 +1,53 @@
+\subsection{Related Work}
+\label{sec:related_work}
+\providecommand{\finalchange}[1]{#1}
+\providecommand{\localexecchange}[1]{#1}
+
+Language-guided manipulation systems use large models to interpret instructions,
+ground objects and skills, and connect semantic plans to executable actions
+through feedback, scene graphs, or spatial constraints~\cite{huang2023inner,
+liang2023code,rana2023sayplan,huang2023voxposer}. For multiple robots, RoCo
+assigns a language-model agent to each robot, SMART-LLM forms capability-aware
+coalitions, COHERENT alternates centralized proposals with robot feedback, and
+LiP-LLM combines dependencies with optimization-based allocation~\cite{mandi2024roco,
+kannan2024smartllm,liu2025coherent,obata2025lipllm}. These systems establish
+semantic decomposition, capability grounding, and feedback-driven coordination.
+Our focus is the organization of semantic responsibility and authority over a
+heterogeneous multi-arm team, rather than a new model-internal reasoning
+procedure.
+
+He et al.~\cite{he2026closedloop} provide the closest architectural comparison.
+Their disclosed hierarchy contains a Planning Agent, a Manipulation Agent
+associated with each robot, and an associated Verification Agent, together with
+semantic sub-operations, visual/action tools, and feedback-driven recovery.
+Both papers therefore connect semantic planning with physical execution and
+verification. The present paper studies team-level Affordance, Planning, and
+Verification Roles over authoritative semantic state, followed by
+actuator-local execution and versioned event re-entry. The comparison is
+structural: properties not specified in the public description of He et al.,
+such as shared state or scheduling semantics, are not treated as absent.
+
+Dynamic manipulation has established solutions for tracked interception,
+reactive grasp refinement, and moving-conveyor operation~\cite{marturi2019dynamic,
+morrison2018closing,maranci2026reactive}. Target-referenced grasping maintains
+correspondence to a selected object across observations~\cite{liu2023target};
+hybrid global and eye-in-hand sensing and final-phase image-based servoing are
+also established~\cite{cuevas2018hybrid,haviland2020finalphase}. Chen et
+al.~\cite{chen2025adaptivegrasp} combine global-to-local observation with
+static-to-dynamic planning for moving clutter. \localexecchange{We use these
+established mechanisms as physical ingredients within vision-driven
+actuator-local skills; they do not define a standalone method component and are
+not claimed independently.}
+
+Execution monitoring, continual planning, behavior-tree replanning, and
+feedback-driven recovery address runtime deviations~\cite{pettersson2005execution,
+brenner2009continual,levihn2013foresight,pezzato2023active}. Language-guided
+systems likewise use perceptual feedback, plan verification, or dedicated
+verification agents to revise semantic action sequences~\cite{huang2023inner,
+rana2023sayplan,he2026closedloop}. The remaining question is how such semantic
+events interact with physical work that may remain valid and continue locally.
+Our method makes this interaction explicit: scene, task, and verification
+events are routed to their role owners, the affected obligation scope is
+constructed from semantic dependencies, and active
+\introchange{execution commitments} receive bounded complete,
+continue, hold, or revoke dispositions.
