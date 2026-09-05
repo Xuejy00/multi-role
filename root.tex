@@ -1,0 +1,76 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage[numbers]{natbib}
+\usepackage[bookmarks=true,hidelinks]{hyperref}
+
+\newif\ifanonymous
+
+% INTERNAL WRITING / OVERLEAF REVIEW:
+% \anonymousfalse
+%
+% RSS DOUBLE-BLIND SUBMISSION:
+% \anonymoustrue
+
+% Current internal default:
+\anonymousfalse
+
+\input{paper_metadata.tex}
+
+\title{\papertitle}
+
+\ifanonymous
+  \author{Author Names Omitted for Anonymous Review}
+  \hypersetup{
+    pdftitle={\papertitle},
+    pdfauthor={Anonymous Authors}
+  }
+\else
+  \author{%
+    \IEEEauthorblockN{\paperauthornames}
+    \IEEEauthorblockA{\paperaffiliation\\
+    Contact: \texttt{\papercontact}}}
+  \hypersetup{
+    pdftitle={\papertitle},
+    pdfauthor={\paperauthornames}
+  }
+\fi
+
+\begin{document}
+
+\maketitle
+
+% Activate only after a real abstract exists.
+% \input{sections/abstract.tex}
+
+\IEEEpeerreviewmaketitle
+
+\input{sections/introduction.tex}
+% II. Problem Description
+\input{sections/problem_formulation.tex}
+% III. Proposed Solution; subsection A is Role-Shared Semantic Coordination.
+\input{sections/role_shared_coordination.tex}
+% Proposed Solution subsections B and C: multi-timescale coordination and
+% directive-governed actuator-local execution.
+\input{sections/semantic_physical_coordination.tex}
+% IV. Experiments
+\input{sections/experiments.tex}
+% Optional limitations section.
+% \input{sections/limitations.tex}
+% V. Conclusion
+\input{sections/conclusion.tex}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
