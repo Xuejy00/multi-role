@@ -1,42 +1,45 @@
-\begin{tikzpicture}[x=1cm,y=1cm,font=\rmfamily\fontsize{8.2}{9.0}\selectfont]
+\begin{tikzpicture}[x=1cm,y=1cm,font=\rmfamily\fontsize{8.0}{8.8}\selectfont]
   \definecolor{expours}{HTML}{287D55}
   \definecolor{expbase}{HTML}{666666}
   \definecolor{expgrid}{HTML}{D4D7DA}
   \definecolor{expnote}{HTML}{F3F4F5}
 
-  % Three final-result panels. The empty axes deliberately encode no data.
-  \foreach \x/\panel/\title/\ylabel in {
-    0.0/{(a)}/{Affected scope}/{Coverage / excess scope},
-    5.75/{(b)}/{Semantic response}/{Event-to-commit latency (s)},
-    11.50/{(c)}/{Physical continuity}/{Continuation / interruption}
+  % Empty result panels reserve the final chart geometry without fabricating data.
+  \foreach \x/\y/\panel/\title/\ylabel in {
+    0.0/4.15/{(a)}/{P0 discrimination}/{False trigger rate (\%)} ,
+    8.30/4.15/{(b)}/{Affected scope}/{Coverage / excess scope} ,
+    0.0/0.0/{(c)}/{Semantic response}/{Latency (s)} ,
+    8.30/0.0/{(d)}/{Unaffected work}/{Interruption rate (\%) }
   }{
-    \begin{scope}[shift={(\x,0)}]
-      \draw[black,line width=0.6pt] (0.75,0.62) -- (5.05,0.62);
-      \draw[black,line width=0.6pt] (0.75,0.62) -- (0.75,3.40);
-      \draw[expgrid,line width=0.35pt] (0.75,1.55) -- (5.05,1.55);
-      \draw[expgrid,line width=0.35pt] (0.75,2.48) -- (5.05,2.48);
-      \foreach \tx/\lab in {1.35/{small},2.90/{medium},4.45/{large}}{
+    \begin{scope}[shift={(\x,\y)}]
+      \draw[black,line width=0.6pt] (0.78,0.62) -- (7.72,0.62);
+      \draw[black,line width=0.6pt] (0.78,0.62) -- (0.78,3.40);
+      \draw[expgrid,line width=0.35pt] (0.78,1.55) -- (7.72,1.55);
+      \draw[expgrid,line width=0.35pt] (0.78,2.48) -- (7.72,2.48);
+      \foreach \tx/\lab in {2.18/{C1},4.25/{C2},6.32/{C3/C4}}{
         \draw[black,line width=0.45pt] (\tx,0.62) -- (\tx,0.53);
         \node[anchor=north] at (\tx,0.47) {\lab};
       }
       \foreach \ty in {1.55,2.48,3.40}{
-        \draw[black,line width=0.45pt] (0.75,\ty) -- (0.66,\ty);
+        \draw[black,line width=0.45pt] (0.78,\ty) -- (0.69,\ty);
       }
       \node[font=\bfseries,anchor=west] at (0.02,3.78) {\panel\ \title};
-      \node[anchor=north] at (2.90,0.05) {Oracle-affected obligation fraction};
-      \node[rotate=90,anchor=south] at (0.06,2.02) {\ylabel};
+      \node[anchor=north] at (4.25,0.05) {Condition};
+      \node[rotate=90,anchor=south] at (0.08,2.02) {\ylabel};
       \node[draw=expgrid,fill=expnote,rounded corners=1pt,align=center,
-            text=expbase,inner xsep=7pt,inner ysep=5pt] at (2.90,2.04)
-            {\bfseries ***\\[-1pt]\normalfont measured series inserted after trials};
+            text=expbase,inner xsep=8pt,inner ysep=5pt] at (4.25,2.04)
+            {\bfseries ***\\[-1pt]\normalfont measured values inserted after trials};
     \end{scope}
   }
 
-  \draw[expours,line width=1.05pt] (5.00,-0.55) -- (5.65,-0.55);
-  \fill[expours] (5.325,-0.55) circle (1.7pt);
-  \node[anchor=west] at (5.78,-0.55) {Proposed selective re-entry};
-  \draw[expbase,dashed,line width=0.95pt] (9.52,-0.55) -- (10.17,-0.55);
+  \draw[expours,line width=1.05pt] (1.05,-0.66) -- (1.72,-0.66);
+  \fill[expours] (1.385,-0.66) circle (1.7pt);
+  \node[anchor=west] at (1.86,-0.66) {Proposed};
+  \draw[expbase,dashed,line width=0.95pt] (5.10,-0.66) -- (5.77,-0.66);
   \node[draw=expbase,fill=white,minimum size=3.2pt,inner sep=0pt]
-        at (9.845,-0.55) {};
-  \node[anchor=west] at (10.30,-0.55) {B3: event-triggered global revalidation};
-  \path[use as bounding box] (-0.05,-0.82) rectangle (16.65,3.98);
+        at (5.435,-0.66) {};
+  \node[anchor=west] at (5.90,-0.66) {B3: global revalidation};
+  \draw[black,dotted,line width=0.9pt] (10.60,-0.66) -- (11.27,-0.66);
+  \node[anchor=west] at (11.40,-0.66) {A$_{\mathrm{event}}$: every change triggers};
+  \path[use as bounding box] (-0.05,-0.92) rectangle (16.62,8.10);
 \end{tikzpicture}

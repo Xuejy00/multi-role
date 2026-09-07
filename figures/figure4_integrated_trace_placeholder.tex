@@ -1,4 +1,4 @@
-\begin{tikzpicture}[x=1cm,y=1cm,font=\rmfamily\fontsize{8.0}{8.8}\selectfont,>=Latex]
+\begin{tikzpicture}[x=1cm,y=1cm,font=\rmfamily\fontsize{7.8}{8.6}\selectfont,>=Latex]
   \definecolor{traceblue}{HTML}{356E9B}
   \definecolor{tracegreen}{HTML}{287D55}
   \definecolor{traceorange}{HTML}{B06A16}
@@ -8,81 +8,84 @@
   \definecolor{tracefill}{HTML}{F5F6F7}
 
   \node[anchor=west,font=\bfseries\fontsize{8.4}{9.2}\selectfont]
-        at (0.05,6.62) {(a) Integrated directive--execution trace};
-  \node[anchor=east,text=tracegray,font=\itshape] at (16.55,6.62)
+        at (0.05,6.72) {(a) Integrated semantic--physical recovery trace};
+  \node[anchor=east,text=tracegray,font=\itshape] at (16.55,6.72)
         {event times and measured durations: ***};
 
   \foreach \y/\label in {
-    5.78/{Semantic state},
-    4.82/{Affected directive $c_v$},
-    3.86/{Unaffected directive $c_w$},
-    2.90/{Local execution},
-    1.94/{Evidence / scope}
+    5.82/{Semantic version},
+    4.90/{Event detection / routing},
+    3.98/{Affected directive $c_v$},
+    3.06/{Unaffected directive $c_w$},
+    2.14/{Local physical execution},
+    1.22/{Disposition / task status}
   }{
     \node[anchor=east,font=\bfseries] at (2.56,\y) {\label};
     \draw[tracegrid,line width=0.35pt] (2.72,\y-0.38) -- (16.50,\y-0.38);
   }
 
-  \draw[-Latex,line width=0.65pt] (2.72,1.20) -- (16.50,1.20)
+  \draw[-Latex,line width=0.65pt] (2.72,0.54) -- (16.50,0.54)
         node[anchor=west] {time};
-  \draw[tracepurple,densely dashed,line width=0.8pt] (9.16,1.18) -- (9.16,6.18);
+  \draw[tracepurple,densely dashed,line width=0.8pt] (9.16,0.52) -- (9.16,6.28);
   \node[fill=white,text=tracepurple,font=\bfseries,align=center]
-        at (9.16,6.08) {event $\mathbf e_k$ at $\tau_k$};
+        at (9.16,6.18) {semantic event $\mathbf e_k$ at $\tau_k$};
 
   \draw[tracepurple,fill=tracepurple!8,rounded corners=1pt]
-        (2.88,5.47) rectangle (8.88,6.02);
-  \node at (5.88,5.745) {$S^{\mathrm{sem}}_{\nu}$: piecewise constant};
+        (2.88,5.51) rectangle (8.88,6.06);
+  \node at (5.88,5.785) {$S^{\mathrm{sem}}_{\nu}$: piecewise constant};
   \draw[tracepurple,fill=tracepurple!8,rounded corners=1pt]
-        (9.44,5.47) rectangle (16.30,6.02);
-  \node at (12.87,5.745) {$S^{\mathrm{sem}}_{\nu+1}$: committed update = \textbf{***}};
+        (9.44,5.51) rectangle (16.30,6.06);
+  \node at (12.87,5.785) {$S^{\mathrm{sem}}_{\nu+1}$: commit = \textbf{***}};
+
+  \node[draw=traceorange,fill=traceorange!8,rounded corners=1pt,align=center]
+        at (5.88,4.62) {P0/S1/S2/S3 label = \textbf{***}\\routing destination = \textbf{***}};
+  \draw[-Latex,traceorange,line width=0.75pt] (8.18,4.62) -- (9.44,4.62);
+  \node[draw=traceorange,fill=traceorange!8,rounded corners=1pt,align=center]
+        at (12.87,4.62) {recognition latency = \textbf{***}\\event-to-commit = \textbf{***}};
 
   \draw[traceblue,fill=traceblue!8,rounded corners=1pt]
-        (2.88,4.50) rectangle (8.88,5.05);
-  \node[align=center] at (5.88,4.775)
+        (2.88,3.69) rectangle (8.88,4.24);
+  \node[align=center] at (5.88,3.965)
         {$c_v=(v,q_v,a(v),\kappa_v,\psi_v,\nu_v)$ fixed while active};
   \draw[traceblue,dashed,fill=traceblue!4,rounded corners=1pt]
-        (9.44,4.50) rectangle (16.30,5.05);
-  \node[align=center] at (12.87,4.775)
+        (9.44,3.69) rectangle (16.30,4.24);
+  \node[align=center] at (12.87,3.965)
         {$D_k(c_v)=\textbf{***}$; replacement $c'_v=\textbf{***}$ if required};
 
   \draw[tracegreen,fill=tracegreen!8,rounded corners=1pt]
-        (2.88,3.54) rectangle (16.30,4.09);
-  \node[align=center] at (9.59,3.815)
+        (2.88,2.77) rectangle (16.30,3.32);
+  \node[align=center] at (9.59,3.045)
         {$c_w$: fixed fields and local execution across $\tau_k$;
          $D_k(c_w)=\textbf{***}$};
 
   \draw[traceorange,fill=traceorange!9,rounded corners=1pt]
-        (2.88,2.58) rectangle (16.30,3.13);
-  \node[align=center] at (9.59,2.855)
-        {observed local state trace = \textbf{***}
-         \quad (RUN / WAIT / REACQUIRE / HOLD)};
+        (2.88,1.85) rectangle (16.30,2.40);
+  \node[align=center] at (9.59,2.125)
+        {visual/local state = \textbf{***} \quad (RUN / WAIT / REACQUIRE / HOLD)};
 
-  \node[draw=traceorange,fill=traceorange!8,rounded corners=1pt]
-        (evidence) at (6.18,1.94) {$y_i^{\mathrm{exec}}=\textbf{***}$};
-  \draw[-Latex,traceorange,line width=0.75pt] (evidence.east) -- (9.02,1.94);
-  \node[anchor=west] at (9.42,2.10)
-        {$v\in\mathcal V^{\mathrm{aff}}_k$: \textbf{***}};
-  \node[anchor=west] at (9.42,1.72)
-        {$w\in\mathcal V^{\mathrm{aff}}_k$: \textbf{***}};
+  \node[draw=tracepurple,fill=tracepurple!8,rounded corners=1pt,align=center]
+        at (5.88,1.02) {affected disposition = \textbf{***}};
+  \node[draw=tracepurple,fill=tracepurple!8,rounded corners=1pt,align=center]
+        at (12.87,1.02) {final task status = \textbf{***}};
 
   \node[anchor=west,font=\bfseries\fontsize{8.4}{9.2}\selectfont]
-        at (0.05,0.72) {(b) Matched real-robot sequence};
+        at (0.05,-0.02) {(b) Matched real-robot sequence};
   \foreach \x/\title in {
     2.95/{Franka 1 frame},
     7.68/{Franka 2 frame},
     12.41/{Mobile-manipulator frame}
   }{
     \draw[tracegray,fill=tracefill,rounded corners=1pt,line width=0.55pt]
-         (\x,0.54) rectangle (\x+4.10,-1.22);
-    \node[font=\bfseries,anchor=north] at (\x+2.05,0.38) {\title};
+         (\x,-0.20) rectangle (\x+4.10,-1.96);
+    \node[font=\bfseries,anchor=north] at (\x+2.05,-2.12) {\title};
     \node[draw=tracegrid,fill=white,rounded corners=1pt,align=center,
           text=tracegray,inner xsep=8pt,inner ysep=5pt]
-          at (\x+2.05,-0.38) {\bfseries ***\\[-1pt]\normalfont frame and timestamp};
+          at (\x+2.05,-1.08) {\bfseries ***\\[-1pt]\normalfont frame and timestamp};
   }
-  \draw[-Latex,tracegray,line width=0.65pt] (7.16,-0.34) -- (7.56,-0.34);
-  \draw[-Latex,tracegray,line width=0.65pt] (11.89,-0.34) -- (12.29,-0.34);
-  \node[anchor=west,text=tracegray,font=\itshape] at (0.05,-1.08)
+  \draw[-Latex,tracegray,line width=0.65pt] (7.16,-1.04) -- (7.56,-1.04);
+  \draw[-Latex,tracegray,line width=0.65pt] (11.89,-1.04) -- (12.29,-1.04);
+  \node[anchor=west,text=tracegray,font=\itshape] at (0.05,-1.84)
         {Placeholders reserve synchronized frames; no execution outcome is encoded.};
 
-  \path[use as bounding box] (0.00,-1.40) rectangle (16.62,6.82);
+  \path[use as bounding box] (0.00,-2.20) rectangle (16.62,6.92);
 \end{tikzpicture}
