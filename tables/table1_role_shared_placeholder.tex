@@ -1,33 +1,32 @@
 \begin{table*}[t!]
   \centering
-  \caption{Role-shared semantic coordination and heterogeneous capability
-  grounding. Lower is better for violation, divergence, invalid-proposal, and
-  invalid-assignment rates; higher is better for feasible-assignment recall.
-  B1 is the monolithic central coordinator, B2 uses per-actuator semantic
-  replicas, A1 removes unique write authority, and A2 removes capability
-  grounding. Every \textbf{***} entry is an unmeasured placeholder and encodes
-  no result.}
+  \caption{Role-shared semantic coordination under matched task, observation,
+  capability, and event inputs. Task success and obligation completion are
+  architecture-neutral outcomes; the remaining columns diagnose C1. Lower is
+  better for invalid proposals and capability-invalid assignments, while
+  higher is better for completion and feasible-assignment recall. Replica
+  divergence is applicable only to B2. Every \textbf{***} entry is an
+  unmeasured placeholder and encodes no result.}
   \label{tab:role_shared_results}
-  \setlength{\tabcolsep}{2.8pt}
-  \renewcommand{\arraystretch}{1.12}
+  \setlength{\tabcolsep}{3.0pt}
+  \renewcommand{\arraystretch}{1.10}
   \small
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{lcccccc}
     \toprule
     Method &
-    \shortstack{Semantic\\violations (\%) $\downarrow$} &
-    \shortstack{Replica\\divergence (\%) $\downarrow$} &
+    \shortstack{Task success\\(\%) $\uparrow$} &
+    \shortstack{Obligation\\completion (\%) $\uparrow$} &
     \shortstack{Invalid\\proposals (\%) $\downarrow$} &
-    \shortstack{Origin\\inconsistency (\%) $\downarrow$} &
+    \shortstack{Replica\\divergence (\%) $\downarrow$} &
     \shortstack{Capability-invalid\\assignments (\%) $\downarrow$} &
     \shortstack{Feasible-assignment\\recall (\%) $\uparrow$} \\
     \midrule
-    Proposed                           & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    B1: Monolithic central             & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    B2: Per-actuator replicas          & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    \midrule
-    A1: No write authority            & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    A2: No capability grounding       & \textbf{***} & -- & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    Proposed                         & \textbf{***} & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
+    B1: Monolithic central           & \textbf{***} & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
+    B2: Per-actuator replicas        & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    A$_{\mathrm{cap}}$: No capability grounding
+                                     & \textbf{***} & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
     \bottomrule
   \end{tabular}}
 \end{table*}
