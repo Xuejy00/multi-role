@@ -13,23 +13,24 @@ The event types are defined in Eq.~\eqref{eq:semantic_events}.  A task update
 changes the current instruction, an external disturbance is interpreted from
 fresh visual evidence, and an execution failure is established by Verification.
 The event then enters the Verification Role, which identifies the affected
-primitive-subtask nodes:
+assignment-aware primitive nodes:
 \begin{equation}
  \mathcal{N}_k^{\mathrm{aff}}=
  \rho_V^{\mathrm{aff}}\bigl(
- e_k,\gamma,G,\mathcal{F},z\bigr),
+ e_k,\gamma,G_{\mathrm{assign}},\mathcal{F},z\bigr),
  \label{eq:affected_subtasks}
 \end{equation}
-where $\mathcal{N}_k^{\mathrm{aff}}\subseteq\mathcal{N}$ contains the subtasks
-whose task meaning, feasibility, execution status, or dependencies require
-reconsideration.  This responsibility extends execution-effect verification to
-event interpretation without introducing another semantic Role.
+where $\mathcal{N}_k^{\mathrm{aff}}\subseteq\mathcal{N}_{\mathrm{assign}}$
+contains the nodes whose task meaning, feasibility, execution status, or
+dependencies require reconsideration.  This responsibility extends
+execution-effect verification to event interpretation without introducing
+another semantic Role.
 
 \subsubsection{Update the Semantic State}
 \label{sec:update_affected_state}
 
-Planning revises the graph and assignment within the identified scope through
-the selective state update
+Planning revises the assignment-aware primitive graph within the identified
+scope through the selective state update
 \begin{equation}
  S_{\nu+1}^{\mathrm{sem}}=
  \mathcal{U}\!\left(
@@ -37,11 +38,12 @@ the selective state update
  \label{eq:semantic_state_update}
 \end{equation}
 where $\mathcal{U}$ returns one authoritative semantic state.  Nodes outside
-$\mathcal{N}_k^{\mathrm{aff}}$ retain their previous assignments whenever those
-assignments remain valid under the updated facts and capabilities.  Thus,
-Verification determines where to reconsider, whereas Planning determines the
-revised task structure and assignments.  An event does not imply global
-replanning or interruption of valid unaffected execution.
+$\mathcal{N}_k^{\mathrm{aff}}$ retain their previous assignment-aware graph
+entries whenever those entries remain valid under the updated facts,
+capabilities, and manipulator set $R$.  Thus, Verification determines where
+to reconsider, whereas Planning determines the revised
+$G_{\mathrm{assign}}$.  An event does not imply global replanning or
+interruption of valid unaffected execution.
 
 \subsection{Dispatch and Execute Primitive Commands}
 \label{sec:dispatch_execute}
@@ -49,44 +51,69 @@ replanning or interruption of valid unaffected execution.
 \subsubsection{Construct Execution Commands}
 \label{sec:construct_commands}
 
-For node $n=(s_n,q_n,\eta_n)$ with assignment
-$a(n)=(r_i,\kappa_n)$, the command passed to local execution is
+For an assignment-aware primitive node $n\in\mathcal{N}_{\mathrm{assign}}$, the
+command passed to the robot interface is
 \begin{equation}
- c_n\triangleq\bigl(s_n,q_n,\eta_n,r_i,\kappa_n\bigr),
+ c_n=\phi_C(n),
+ \qquad
+ \phi_C:\mathcal{N}_{\mathrm{assign}}\rightarrow\mathcal{C},
  \label{eq:execution_command}
 \end{equation}
-where $\eta_n$ remains in the graph node for Verification and is not part of
-the command.  After each verified completion, the dispatcher scans nodes that
-have not completed or been sent.  A node is executable when every predecessor
-$n_p$ linked by $(n_p,n)\in\mathcal{L}$ has status $\texttt{COMPLETED}$.
-Independent executable commands form a concurrent command set
-$\mathbf{c}_m=\{c_{n_1},c_{n_2},\cdots\}$.
+where $\phi_C$ is the command construction function and $\mathcal{C}$ denotes
+the executable command space, distinct from the per-manipulator capability
+sets $\{\mathcal{C}_i\}_{i=1}^{N}$.  Although $n$ contains semantic execution
+information, $c_n$ represents the executable command sent to the robot
+interface.  At each execution step, nodes whose predecessor dependencies are
+satisfied are selected into $\mathcal{N}_{\mathrm{exec}}$ and converted into
+primitive command sets.  This is a temporary execution-time set rather than an
+additional semantic state variable.  A node is executable when every
+predecessor in $\mathrm{pred}_{\mathrm{assign}}(n)$ has status
+$\texttt{COMPLETED}$.  Independent executable commands form a concurrent
+command set $\mathbf{c}_m=\{c_{n_1},c_{n_2},\cdots\}$.
 
-\subsubsection{Execute Commands with Local Skills}
+\subsubsection{Execute Commands and Verify Outcomes}
 \label{sec:manipulator_local_execution}
 
 The assigned local skill executes each command using the manipulator's current
 visual observations and existing perception, tracking, and control stack.  The
 command retains its target reference, so continuous target motion can be
-handled locally without semantic replanning.  Local execution returns evidence
-for Verification but cannot independently alter the task, graph, facts,
-assignment, or execution status in the shared semantic state.
+handled locally without semantic replanning.  After primitive-subtask
+execution, the latest observation updates the scene affordance information,
+conceptually as $\mathcal{F}\rightarrow\mathcal{F}'$.  Local execution returns
+evidence for Verification but cannot independently alter the task, graph,
+facts, assignment-aware primitive graph, or execution status in the shared
+semantic state.  Verification then extracts execution evidence from the
+executed command and the current scene information:
+\begin{equation}
+ \eta_n=\rho_V^{e}\bigl(c_n,\mathcal{F}\bigr),
+ \label{eq:verification_evidence}
+\end{equation}
+and determines the execution status from that evidence:
+\begin{equation}
+ z(n)=\rho_V^{z}\bigl(\eta_n\bigr).
+ \label{eq:verification_status}
+\end{equation}
+Thus, Verification provides both semantic execution evidence and the status
+used to advance the assignment-aware primitive graph.
 
 \subsection{Coordinate the Closed Loop}
 \label{sec:closed_loop_coordination}
 
 The task and initial visual observation first establish the role-shared
-semantic state.  Planning decomposes the task and assigns each primitive
-subtask to a compatible manipulator and local skill.  The dispatcher then
-issues all independent executable commands, and local skills handle continuous
-physical execution.  Fresh visual evidence allows Verification to confirm the
-intended effects, after which newly executable graph nodes can be dispatched.
+semantic state.  Planning constructs the abstract graph $G$, materializes
+$G_{\mathrm{assign}}$, and passes its executable nodes through $\phi_C$.  The
+dispatcher then issues all independent executable commands, and local skills
+handle continuous physical execution.  Verification extracts execution
+evidence $\eta_n$ and maps it to status $z(n)$, after which newly executable
+graph nodes can be dispatched.
 
 Normal verification advances the task without another Planning call.  When a
 task update, external disturbance, or execution failure changes task-relevant
 evidence, Verification identifies the affected scope and Planning selectively
-revises its graph and assignments.  Valid unaffected execution continues when
-possible.  Algorithm~\ref{alg:coordination} summarizes this closed loop.
+revises $G_{\mathrm{assign}}$.  Valid unaffected execution continues when
+possible.  Thus, the closed loop follows
+$G\rightarrow G_{\mathrm{assign}}\rightarrow\mathbf C\rightarrow z$.
+Algorithm~\ref{alg:coordination} summarizes this closed loop.
 
 \begin{algorithm}[t]
 \caption{Online Role-Shared Semantic Coordination}
@@ -96,7 +123,8 @@ possible.  Algorithm~\ref{alg:coordination} summarizes this closed loop.
 \Statex \textbf{Input:}
 task instruction $\gamma$, observation stream $o(t)$,
 and heterogeneous capability sets
-$\{\mathcal C_i\}_{i=1}^{N}$
+$\{\mathcal C_i\}_{i=1}^{N}$,
+together with manipulator set $R$
 
 \Statex \textbf{Output:}
 online command-set sequence $\mathbf C$
@@ -105,12 +133,13 @@ online command-set sequence $\mathbf C$
 
 \State $G\gets\rho_P^G(\gamma,\mathcal F)$
 
-\State $a\gets\rho_P^a
-(G,\mathcal F,\{\mathcal C_i\}_{i=1}^{N})$
+\State $G_{\mathrm{assign}}\gets\rho_P^{\mathrm{assign}}
+(G,\mathcal F,\{\mathcal C_i\}_{i=1}^{N},
+R)$
 
 \State $S_\nu^{\mathrm{sem}}
 \gets
-(\gamma,G,\mathcal F,a,z)$
+(\gamma,G_{\mathrm{assign}},\mathcal F,z)$
 
 \State $\mathbf C\gets()$
 
@@ -119,17 +148,14 @@ online command-set sequence $\mathbf C$
     \State
     $\mathcal N_{\mathrm{exec}}
     \gets
-    \{n\in\mathcal N
+    \{n\in\mathcal N_{\mathrm{assign}}
     \mid
     z(n)\neq\texttt{COMPLETED},
     \ z(j)=\texttt{COMPLETED},
-    \forall j\in\mathrm{pred}(n)\}$
+    \forall j\in\mathrm{pred}_{\mathrm{assign}}(n)\}$
 
     \State
-    $c_n\gets
-    \operatorname{Concat}(n,a(n))
-    =
-    (s_n,q_n,\eta_n,r_i,\kappa_n),
+    $c_n\gets\phi_C(n),
     \quad
     \forall n\in\mathcal N_{\mathrm{exec}}$
 
@@ -143,12 +169,22 @@ online command-set sequence $\mathbf C$
     $\mathbf C\gets(\mathbf C,\mathbf c_m)$
 
     \State Execute $\mathbf c_m$
+    \State
+    $\mathcal F\gets\rho_A(o_t')$
+
+    \State
+    $\eta_n\gets
+    \rho_V^{e}(c_n,\mathcal F),
+    \quad
+    \forall c_n\in\mathbf c_m$
 
     \State
     $z(n)\gets
-    \rho_V(\mathcal F,\eta_n),
+    \rho_V^{z}(\eta_n),
     \quad
     \forall c_n\in\mathbf c_m$
+
+  
 
     \If{task-relevant event $e_k$ occurs}
 
@@ -156,7 +192,7 @@ online command-set sequence $\mathbf C$
         $\mathcal N_k^{\mathrm{aff}}
         \gets
         \rho_V^{\mathrm{aff}}
-        (e_k,\gamma,G,\mathcal F,z)$
+        (e_k,\gamma,G_{\mathrm{assign}},\mathcal F,z)$
 
         \State
         $S_{\nu+1}^{\mathrm{sem}}
@@ -173,3 +209,4 @@ online command-set sequence $\mathbf C$
 
 \end{algorithmic}
 \end{algorithm}
+

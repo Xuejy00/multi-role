@@ -5,7 +5,8 @@ Figure~\ref{fig:method_overview} summarizes the information flow from the task
 and visual observations to concurrent manipulator execution.  The method uses
 one shared semantic state with explicit Affordance, Planning, and Verification
 responsibilities.  The state is revised selectively when task-relevant evidence
-changes, and its graph and assignments are compiled into primitive commands.
+changes, and its assignment-aware primitive graph is compiled into executable
+commands.
 
 \begin{figure*}[t]
   \centering
@@ -13,10 +14,10 @@ changes, and its graph and assignments are compiled into primitive commands.
     \input{figures/figure2_framework_placeholder.tex}}
   \caption{Placeholder overview of the Role-Shared Semantic Coordination
   Framework.  A four-manipulator simulation scene provides task and visual
-  inputs to the Affordance, Planning, and Verification Roles.  The Roles
-  maintain the shared semantic state, including graph $G$ and assignment $a$,
-  before command dispatch; a task-relevant event returns to the state-update
-  path.}
+  inputs to the Affordance, Planning, and Verification Roles.  Planning first
+  constructs an abstract graph $G$ and then an assignment-aware graph
+  $G_{\mathrm{assign}}$.  The shared state stores $G_{\mathrm{assign}}$ before
+  command dispatch; a task-relevant event returns to the state-update path.}
   \label{fig:method_overview}
 \end{figure*}
 
@@ -29,24 +30,22 @@ changes, and its graph and assignments are compiled into primitive commands.
 The common representation read and updated by the three Roles is
 \begin{equation}
  S_\nu^{\mathrm{sem}}\triangleq
- \bigl(\gamma,G,\mathcal{F},a,z\bigr),
+ \bigl(\gamma,G_{\mathrm{assign}},\mathcal{F},z\bigr),
  \label{eq:semantic_state}
 \end{equation}
 where $\nu$ is the semantic version, $\gamma$ is the current task,
-$\mathcal{F}$ contains task-relevant scene and feasibility facts, $a$ is the
-manipulator-and-skill assignment, and $z$ records primitive-subtask status.
-The dependency graph and each of its nodes are defined by
+$\mathcal{F}$ contains task-relevant scene and feasibility facts,
+$G_{\mathrm{assign}}$ is the current assignment-aware primitive graph, and $z$
+records execution status.  The Planning Role first constructs an abstract
+semantic task graph:
 \begin{equation}
- G\triangleq\bigl(\mathcal{N},\mathcal{L}\bigr),
- \qquad
- n\triangleq\bigl(s_n,q_n,\eta_n\bigr),
- \label{eq:primitive_task_graph}
+ G\triangleq\bigl(\mathcal{N},\mathcal{E}\bigr),
+ \label{eq:semantic_task_graph}
 \end{equation}
-where $\mathcal{N}$ is the set of primitive-subtask nodes, $\mathcal{L}$ is the
-set of dependency links, $s_n$ is the primitive subtask, $q_n$ is its target,
-and $\eta_n$ is its intended effect.  A link $(n_i,n_j)\in\mathcal{L}$ means
-that $n_j$ depends on completion of $n_i$; capability and controller state are
-not encoded in the graph.
+where $\mathcal{N}$ represents abstract semantic task nodes and $\mathcal{E}$
+represents task dependency relations.  This intermediate graph describes what
+subtasks should be completed and how they depend on one another.  It does not
+contain manipulator assignments, execution skills, or verification information.
 
 \subsubsection{Assign Responsibilities to Three Semantic Roles}
 \label{sec:semantic_roles}
@@ -66,41 +65,56 @@ target to retrieve the currently tracked physical target state.  This preserves
 the flow from semantic target to local tracking to skill execution without
 adding target-state variables to the shared semantic representation.
 
-\emph{Planning Role.}  Planning first decomposes the current task using the
-facts and then assigns every primitive subtask using the heterogeneous
-capabilities:
+\emph{Planning Role.}  Planning first uses the task instruction $\gamma$ and
+scene information $\mathcal{F}$ to construct the abstract semantic task graph
+$G$ in Eq.~\eqref{eq:semantic_task_graph}.  This graph only represents
+abstract semantic task dependencies: its nodes are abstract semantic
+subtasks, and it does not include manipulator assignments or execution
+information.  Planning then further considers the heterogeneous capability
+sets $\{\mathcal{C}_i\}_{i=1}^{N}$ and the manipulator set $R$ to materialize
+the assignment-aware primitive graph:
 \begin{equation}
  \begin{aligned}
- G&=\rho_P^G\bigl(\gamma,\mathcal{F}\bigr),\\
- a&=\rho_P^a\!\left(
- G,\mathcal{F},\{\mathcal{C}_i\}_{i=1}^{N}\right),
+ G_{\mathrm{assign}}&=
+ \rho_P^{\mathrm{assign}}\!\left(
+ G,\mathcal{F},\{\mathcal{C}_i\}_{i=1}^{N},R\right)\\
+ &=\bigl(\mathcal{N}_{\mathrm{assign}},
+ \mathcal{E}_{\mathrm{assign}}\bigr),
  \end{aligned}
  \label{eq:planning_pipeline}
 \end{equation}
-where $a(n)=(r_i,\kappa_n)$ assigns node $n$ to manipulator $r_i$ and
-a compatible local skill $\kappa_n$.  Both computations belong to one Planning
-Role and preserve the order from task decomposition to capability-aware
-assignment.
+where, for each $n\in\mathcal{N}_{\mathrm{assign}}$,
+\[
+n=\bigl(s_n,q_n,r_i,\kappa_n\bigr).
+\]
+Here $s_n$ is the primitive skill type, $q_n$ is the semantic target, $r_i$ is
+the assigned manipulator, and $\kappa_n$ is the execution skill.  The
+relations in $\mathcal{E}_{\mathrm{assign}}$ include the semantic task
+	dependencies from $G$ and manipulator-aware execution dependencies induced by
+	$R$.  Thus, $G_{\mathrm{assign}}$ records what to execute,
+who executes it, and which skill is used, whereas $G$ remains an abstract
+semantic planning graph.  For
+$n\in\mathcal{N}_{\mathrm{assign}}$,
+$\mathrm{pred}_{\mathrm{assign}}(n)$ denotes the predecessor nodes $j$ such
+that $(j,n)\in\mathcal{E}_{\mathrm{assign}}$.
 
-\emph{Verification Role.}  Verification evaluates the intended effect of an
-executed primitive subtask against the current facts:
-\begin{equation}
- z(n)=\rho_V\bigl(\mathcal{F},\eta_n\bigr),
- \label{eq:verification_map}
-\end{equation}
-where $z(n)$ becomes $\texttt{COMPLETED}$ only when the evidence supports
-$\eta_n$.  Successful verification advances normal execution.  When a task
-update, external disturbance, or execution failure requires semantic revision,
-the Verification Role also interprets the event against the shared state and
-identifies the affected primitive subtasks, as detailed in
-Section~\ref{sec:affected_subtasks}.  Planning subsequently revises the graph
-and assignment within that scope.
+\emph{Verification Role.}  Verification Role maintains execution evidence
+$\eta_n$ and execution status $z(n)$.  It first extracts semantic execution
+evidence $\eta_n$ from the executed command and the current scene information,
+and then infers execution status $z(n)$ from that evidence.  The detailed
+mappings are defined in the following equations in
+Section~\ref{sec:manipulator_local_execution}.  Successful verification advances normal
+execution.  When a task update, external disturbance, or execution failure
+requires semantic revision, the Verification Role also interprets the event
+against the shared state and identifies the affected assignment-aware
+primitive nodes, as detailed in Section~\ref{sec:affected_subtasks}.  Planning
+subsequently revises $G_{\mathrm{assign}}$ within that scope.
 
 Together, the three Roles maintain complementary components of one shared
-semantic state $S_\nu^{\mathrm{sem}}=(\gamma,G,\mathcal{F},a,z)$ in
-Eq.~\eqref{eq:semantic_state}.  The Affordance Role maintains
-the scene and feasibility facts $\mathcal{F}$, the Planning Role maintains the
-task graph and capability-aware assignment $(G,a)$, and the Verification Role
-maintains primitive-subtask status $z$.  The task instruction $\gamma$ remains
-the common specification read by all three Roles; none of the Roles defines an
-independent semantic state.
+semantic state $S_\nu^{\mathrm{sem}}=(\gamma,G_{\mathrm{assign}},
+\mathcal{F},z)$ in Eq.~\eqref{eq:semantic_state}.  The Affordance Role maintains
+the scene and feasibility facts $\mathcal{F}$, the Planning Role constructs and
+updates $G_{\mathrm{assign}}$ from the intermediate graph $G$, and the
+Verification Role maintains execution status $z$ through execution evidence.
+The task instruction $\gamma$ remains the common specification read by all
+three Roles; none of the Roles defines an independent semantic state.

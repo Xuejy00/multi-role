@@ -44,20 +44,23 @@ commands that can be issued concurrently to the team.  The internal command
 fields are defined in Section~\ref{sec:construct_commands}, not in this problem
 formulation.
 
-The next command set is generated online from the task, heterogeneous
-capabilities, visual history, semantic event history, and previously issued
-command sets:
+The next command set is generated online by the role-shared coordination
+pipeline from the task, heterogeneous capabilities, visual history, semantic
+event history, and previously issued command sets:
 \begin{equation}
  \mathbf{c}_m=
- \Pi\!\left(
+ \Pi_{\mathrm{coord}}\!\left(
  \gamma,\{\mathcal{C}_i\}_{i=1}^{N},o(0\!:\!t_m),
  e_{1:k_m},\mathbf{c}_{1:m-1}\right),
  \label{eq:online_command_generation}
 \end{equation}
 where $t_m$ is the decision time and $k_m$ is the number of semantic events
-observed by that time.  The ordering of the arguments preserves the information
-flow from task specification and embodiment capabilities to observations,
-events, and prior command sets.
+observed by that time.  The operator $\Pi_{\mathrm{coord}}$ denotes the
+complete online pipeline whose internal stages construct $G$,
+$G_{\mathrm{assign}}$, executable commands, and verification status as defined
+in the Method.  The ordering of the arguments preserves the information flow
+from task specification and embodiment capabilities to observations, events,
+and prior command sets.
 
 \subsection{Online Coordination Problem}
 \label{sec:coordination_problem}

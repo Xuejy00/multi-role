@@ -47,13 +47,15 @@ and execution failures.
 \subsection{Our Method}
 
 The proposed method maintains one role-shared semantic representation for the
-current task, task dependencies, scene feasibility, assignments, and execution
-status.  Affordance, Planning, and Verification Roles contribute complementary
-information to this representation.  Task updates, external disturbances, and
-execution failures trigger selective reconsideration, while valid physical
-execution continues whenever the affected scope does not invalidate it.  The
-resulting primitive commands are issued concurrently to compatible
-manipulators and executed by their local skills.
+current task, the assignment-aware primitive graph, scene feasibility, and
+execution status.  Planning first constructs an abstract semantic task graph
+and then materializes assignment-aware primitive nodes; Affordance and
+Verification Roles provide the scene information and execution evidence used
+by this process.  Task updates, external disturbances, and execution failures
+trigger selective reconsideration, while valid physical execution continues
+whenever the affected scope does not invalidate it.  The resulting executable
+commands are issued concurrently to compatible manipulators and executed by
+their local skills.
 
 The paper makes two contributions:
 \begin{itemize}
