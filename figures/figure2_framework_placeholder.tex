@@ -17,14 +17,14 @@
   \node[box,text width=3.25cm,minimum height=0.92cm] (aff) at (5.15,4.45)
     {Affordance Role\\facts $\mathcal{F}$};
   \node[box,text width=3.25cm,minimum height=0.92cm] (plan) at (5.15,2.95)
-    {Planning Role\\graph $G$ and assignment $a$};
+    {Planning Role\\$G\rightarrow G_{\mathrm{assign}}$};
   \node[box,text width=3.25cm,minimum height=0.92cm] (ver) at (5.15,1.45)
-    {Verification Role\\status $z$};
+    {Verification Role\\$\eta_n\rightarrow z$};
 
   \node[box,text width=4.0cm,minimum height=1.15cm] (state) at (9.55,3.00)
-    {Shared semantic state\\$S_\nu^{\mathrm{sem}}=(\gamma,G,\mathcal{F},a,z)$};
+    {Shared semantic state\\$S_\nu^{\mathrm{sem}}=(\gamma,G_{\mathrm{assign}},\mathcal{F},z)$};
   \node[box,text width=3.25cm,minimum height=0.92cm] (dispatch) at (13.75,3.95)
-    {Command dispatch\\online command sets $\mathbf{c}_m$};
+    {Command dispatch\\$n\mapsto c_n=\phi_C(n)$\\online command sets $\mathbf{c}_m$};
   \node[box,text width=3.25cm,minimum height=0.92cm] (exec) at (13.75,2.15)
     {Local skills\\concurrent execution};
   \node[box,text width=2.7cm,minimum height=0.80cm] (event) at (9.55,0.55)

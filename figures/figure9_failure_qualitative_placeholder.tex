@@ -12,7 +12,7 @@
   \node[font=\bfseries\fontsize{8.8}{9.8}\selectfont] at (8.25,6.00)
     {Qualitative semantic-structure update placeholder};
   \node[panel,text width=3.15cm,minimum height=0.78cm] (before) at (8.25,5.20)
-    {Before semantic structure\\original $G$, original $a$};
+    {Before semantic structure\\original $G_{\mathrm{assign}}$};
 
   \node[panel,text width=2.35cm,minimum height=0.55cm] (evone) at (1.8,4.20) {E1};
   \node[panel,text width=2.35cm,minimum height=0.55cm] (evtwo) at (6.15,4.20) {E2};
@@ -22,11 +22,11 @@
   \draw[flow] (before) -- (evthree);
 
   \node[panel,text width=2.35cm,minimum height=0.55cm] (aftone) at (1.8,1.25)
-    {After E1\\updated $G$, updated $a$};
+    {After E1\\updated $G_{\mathrm{assign}}$};
   \node[panel,text width=2.35cm,minimum height=0.55cm] (afttwo) at (6.15,1.25)
-    {After E2\\updated $G$, updated $a$};
+    {After E2\\updated $G_{\mathrm{assign}}$};
   \node[panel,text width=2.35cm,minimum height=0.55cm] (aftthree) at (10.50,1.25)
-    {After E3\\updated $G$, updated $a$};
+    {After E3\\updated $G_{\mathrm{assign}}$};
   \draw[flow] (evone) -- (aftone);
   \draw[flow] (evtwo) -- (afttwo);
   \draw[flow] (evthree) -- (aftthree);
@@ -34,15 +34,15 @@
   \node[panel,text width=2.35cm,minimum height=1.25cm] (g1) at (1.8,2.55)
     {};
   \node[panel,text width=2.35cm,minimum height=1.25cm] (g2) at (6.15,2.55)
-    {original $a$\\$a(n_1)=r_1$\\$a(n_2)=r_2$};
+    {original assignment-aware\\primitive graph};
   \node[panel,text width=2.35cm,minimum height=1.25cm] (g3) at (10.50,2.55)
     {};
-  \node[font=\bfseries] at (1.80,2.96) {original $G$};
+  \node[font=\bfseries] at (1.80,2.96) {original $G_{\mathrm{assign}}$};
   \draw[black!45,line width=0.5pt] (1.25,2.20) -- (1.80,2.55) -- (2.35,2.20);
   \node[graph] at (1.25,2.20) {};
   \node[changed] at (1.80,2.55) {};
   \node[graph] at (2.35,2.20) {};
-  \node[font=\bfseries] at (10.50,2.96) {updated $G$ and $a$};
+  \node[font=\bfseries] at (10.50,2.96) {updated $G_{\mathrm{assign}}$};
   \draw[black!45,line width=0.5pt] (9.95,2.20) -- (10.50,2.55) -- (11.05,2.20);
   \node[graph] at (9.95,2.20) {};
   \node[changed] at (10.50,2.55) {};

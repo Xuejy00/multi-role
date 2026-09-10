@@ -54,12 +54,12 @@
   \node[box,draw=planline,fill=planfill,text width=4.05cm,
         minimum height=1.28cm] (plan)
     at (9.35,9.37) {\textbf{Planning Role}\\[-1pt]
-      $\gamma\;\rightarrow\;G\;\rightarrow\;a$\\
-      graph decomposition, capability-aware assignment};
+      $\gamma\;\rightarrow\;G\;\rightarrow\;G_{\mathrm{assign}}$\\
+      graph decomposition, capability- and occupancy-aware assignment};
   \node[box,draw=verifyline,fill=verifyfill,text width=3.35cm,
         minimum height=1.28cm] (ver)
     at (13.70,9.37) {\textbf{Verification Role}\\[-1pt]
-      intended effect $\eta_n$\\
+      execution evidence $\eta_n$\\
       and status $z(n)$};
   \draw[flow,draw=planline] (task) -- (plan.north);
   \draw[flow,draw=affline] (obs) -- (aff.north);
@@ -67,7 +67,7 @@
   \node[box,draw=stateline,fill=statefill,text width=13.0cm,
         minimum height=0.85cm] (state) at (9.35,7.78)
     {\textbf{Authoritative shared semantic state}\\[-1pt]
-     $S_\nu^{\mathrm{sem}}=(\gamma,G,\mathcal{F},a,z)$\\[-1pt]
+     $S_\nu^{\mathrm{sem}}=(\gamma,G_{\mathrm{assign}},\mathcal{F},z)$\\[-1pt]
      \small one state read by all three Roles};
   \draw[flow,draw=affline] (aff.south) -- (state.north -| aff);
   \draw[flow,draw=planline] (plan.south) -- (state.north -| plan);
@@ -99,8 +99,8 @@
   \node[box,draw=planline,fill=planfill,text width=4.45cm,
         minimum height=1.35cm] (command) at (4.00,3.50)
     {\textbf{C.1 Construct execution command}\\[-1pt]
-     $c_n\triangleq(s_n,q_n,r_i,\kappa_n)$\\[-1pt]
-     $\eta_n$ remains in the node for Verification};
+     $c_n=\phi_C(n)$\\[-1pt]
+     node and command remain distinct};
   \node[box,draw=execline,fill=execfill,text width=4.45cm,
         minimum height=1.35cm] (local) at (9.25,3.50)
     {\textbf{C.2 Execute with local skill}\\[-1pt]
@@ -121,11 +121,12 @@
   \node[box,draw=verifyline,fill=verifyfill,text width=4.35cm,
         minimum height=1.20cm] (evidence) at (5.05,0.88)
     {fresh visual evidence $o(t^+)$\\[-1pt]
-     $(\mathcal{F}^+,\eta_n)\xrightarrow{\rho_V}z(n)$};
+     $(c_n,\mathcal{F})\xrightarrow{\rho_V^e}\eta_n
+     \xrightarrow{\rho_V^z}z(n)$};
   \node[box,draw=stateline,fill=statefill,text width=4.30cm,
         minimum height=1.20cm] (progress) at (10.10,0.88)
     {verified success $\Rightarrow z(n)=\texttt{COMPLETED}$\\[-1pt]
-     normal task progress; scan $G$ again};
+     normal task progress; scan $G_{\mathrm{assign}}$ again};
   \node[box,draw=eventline,fill=eventfill,text width=3.80cm,
         minimum height=1.20cm] (reentry)
     at (15.05,0.88) {task-relevant event\\[-1pt]
