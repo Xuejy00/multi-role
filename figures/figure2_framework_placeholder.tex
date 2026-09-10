@@ -1,0 +1,46 @@
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\sffamily\fontsize{7.5}{8.3}\selectfont,
+  >=Latex,
+  box/.style={draw=black!45,fill=black!5,rounded corners=1pt,
+              line width=0.55pt,align=center,inner xsep=5pt,inner ysep=4pt},
+  flow/.style={-Latex,draw=black!55,line width=0.65pt},
+  event/.style={-Latex,dashed,draw=black!55,line width=0.65pt}
+]
+  \node[font=\bfseries\fontsize{9.0}{10.0}\selectfont] at (8.4,5.25)
+    {Role-Shared Semantic Coordination Framework};
+
+  \node[box,text width=3.0cm,minimum height=1.0cm] (scene) at (1.55,3.95)
+    {Four-manipulator simulation scene\\visual observations $o(t)$};
+  \node[box,text width=3.0cm,minimum height=1.0cm] (task) at (1.55,2.25)
+    {Task instruction $\gamma$\\capability sets $\{\mathcal{C}_i\}$};
+
+  \node[box,text width=3.25cm,minimum height=0.92cm] (aff) at (5.15,4.45)
+    {Affordance Role\\facts $\mathcal{F}$};
+  \node[box,text width=3.25cm,minimum height=0.92cm] (plan) at (5.15,2.95)
+    {Planning Role\\graph $G$ and assignment $a$};
+  \node[box,text width=3.25cm,minimum height=0.92cm] (ver) at (5.15,1.45)
+    {Verification Role\\status $z$};
+
+  \node[box,text width=4.0cm,minimum height=1.15cm] (state) at (9.55,3.00)
+    {Shared semantic state\\$S_\nu^{\mathrm{sem}}=(\gamma,G,\mathcal{F},a,z)$};
+  \node[box,text width=3.25cm,minimum height=0.92cm] (dispatch) at (13.75,3.95)
+    {Command dispatch\\online command sets $\mathbf{c}_m$};
+  \node[box,text width=3.25cm,minimum height=0.92cm] (exec) at (13.75,2.15)
+    {Local skills\\concurrent execution};
+  \node[box,text width=2.7cm,minimum height=0.80cm] (event) at (9.55,0.55)
+    {Task-relevant event\\selective update};
+
+  \draw[flow] (scene) -- (aff);
+  \draw[flow] (task) -- (plan);
+  \draw[flow] (aff) -- (state);
+  \draw[flow] (plan) -- (state);
+  \draw[flow] (ver) -- (state);
+  \draw[flow] (state) -- (dispatch);
+  \draw[flow] (dispatch) -- (exec);
+  \draw[event] (exec.south) |- (event.east);
+  \draw[event] (event.west) -| (state.south);
+
+  \node[font=\itshape\fontsize{6.8}{7.5}\selectfont,text=black!55]
+    at (8.4,-0.15) {Gray boxes reserve the final framework artwork; arrows show information flow.};
+  \path[use as bounding box] (0.0,-0.35) rectangle (16.8,5.55);
+\end{tikzpicture}

@@ -1,0 +1,56 @@
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\sffamily\fontsize{7.2}{8.0}\selectfont,
+  >=Latex,
+  panel/.style={draw=black!45,fill=black!5,rounded corners=1pt,
+                line width=0.55pt,align=center},
+  graph/.style={draw=black!55,fill=white,circle,inner sep=1.2pt,
+                minimum size=0.32cm,line width=0.5pt},
+  changed/.style={draw=black!70,fill=black!22,circle,inner sep=1.2pt,
+                  minimum size=0.32cm,line width=0.7pt},
+  flow/.style={-Latex,draw=black!55,line width=0.65pt}
+]
+  \node[font=\bfseries\fontsize{8.8}{9.8}\selectfont] at (8.25,6.00)
+    {Qualitative semantic-structure update placeholder};
+  \node[panel,text width=3.15cm,minimum height=0.78cm] (before) at (8.25,5.20)
+    {Before semantic structure\\original $G$, original $a$};
+
+  \node[panel,text width=2.35cm,minimum height=0.55cm] (evone) at (1.8,4.20) {E1};
+  \node[panel,text width=2.35cm,minimum height=0.55cm] (evtwo) at (6.15,4.20) {E2};
+  \node[panel,text width=2.35cm,minimum height=0.55cm] (evthree) at (10.50,4.20) {E3};
+  \draw[flow] (before) -- (evone);
+  \draw[flow] (before) -- (evtwo);
+  \draw[flow] (before) -- (evthree);
+
+  \node[panel,text width=2.35cm,minimum height=0.55cm] (aftone) at (1.8,1.25)
+    {After E1\\updated $G$, updated $a$};
+  \node[panel,text width=2.35cm,minimum height=0.55cm] (afttwo) at (6.15,1.25)
+    {After E2\\updated $G$, updated $a$};
+  \node[panel,text width=2.35cm,minimum height=0.55cm] (aftthree) at (10.50,1.25)
+    {After E3\\updated $G$, updated $a$};
+  \draw[flow] (evone) -- (aftone);
+  \draw[flow] (evtwo) -- (afttwo);
+  \draw[flow] (evthree) -- (aftthree);
+
+  \node[panel,text width=2.35cm,minimum height=1.25cm] (g1) at (1.8,2.55)
+    {};
+  \node[panel,text width=2.35cm,minimum height=1.25cm] (g2) at (6.15,2.55)
+    {original $a$\\$a(n_1)=r_1$\\$a(n_2)=r_2$};
+  \node[panel,text width=2.35cm,minimum height=1.25cm] (g3) at (10.50,2.55)
+    {};
+  \node[font=\bfseries] at (1.80,2.96) {original $G$};
+  \draw[black!45,line width=0.5pt] (1.25,2.20) -- (1.80,2.55) -- (2.35,2.20);
+  \node[graph] at (1.25,2.20) {};
+  \node[changed] at (1.80,2.55) {};
+  \node[graph] at (2.35,2.20) {};
+  \node[font=\bfseries] at (10.50,2.96) {updated $G$ and $a$};
+  \draw[black!45,line width=0.5pt] (9.95,2.20) -- (10.50,2.55) -- (11.05,2.20);
+  \node[graph] at (9.95,2.20) {};
+  \node[changed] at (10.50,2.55) {};
+  \node[graph] at (11.05,2.20) {};
+  \draw[flow] (evone) -- (g1);
+  \draw[flow] (evtwo) -- (g2);
+  \draw[flow] (evthree) -- (g3);
+  \node[font=\itshape\fontsize{6.7}{7.4}\selectfont,text=black!55]
+    at (8.25,0.15) {Gray panels are placeholders; highlighted vertices indicate affected scope only.};
+  \path[use as bounding box] (0.0,-0.25) rectangle (12.1,6.28);
+\end{tikzpicture}

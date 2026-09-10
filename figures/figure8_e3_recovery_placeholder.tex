@@ -1,0 +1,26 @@
+\begin{tikzpicture}[x=1cm,y=1cm,font=\rmfamily\fontsize{7.5}{8.3}\selectfont,>=Latex]
+  \definecolor{ink}{HTML}{202326}
+  \definecolor{event}{HTML}{9A435A}
+  \definecolor{recover}{HTML}{287D55}
+  \definecolor{border}{HTML}{7A8188}
+  \definecolor{fill}{HTML}{F5F6F7}
+  \foreach \y/\rowtitle in {3.15/{C2-E3: static stacked-object stress},0.0/{C4-E3: high-speed conveyor stress}}{
+    \begin{scope}[shift={(0,\y)}]
+      \node[anchor=west,font=\bfseries] at (0.05,2.28) {\rowtitle};
+      \foreach \x/\lab in {0.25/{valid\\PICK},3.35/{physical\\failure},6.45/{Verification},9.55/{E3},12.65/{revised\\command}}{
+        \draw[border,fill=fill,rounded corners=1pt,line width=0.55pt]
+          (\x,0.35) rectangle +(2.35,1.25);
+        \node[align=center,text=ink] at (\x+1.175,0.98) {\lab};
+      }
+      \draw[ink,-Latex,line width=0.7pt] (2.65,0.98)--(3.25,0.98);
+      \draw[ink,-Latex,line width=0.7pt] (5.75,0.98)--(6.35,0.98);
+      \draw[event,-Latex,line width=0.8pt] (8.85,0.98)--(9.45,0.98);
+      \draw[recover,-Latex,line width=0.8pt] (12.05,0.98)--(12.55,0.98);
+      \node[text=event,font=\bfseries] at (7.63,1.88) {$\times$};
+      \node[text=event,font=\bfseries] at (10.73,1.88) {$e^{\texttt{fail}}$};
+      \node[anchor=west,text=border,font=\itshape] at (15.35,0.98)
+        {scene / frame placeholder};
+    \end{scope}
+  }
+  \path[use as bounding box] (0.0,-0.08) rectangle (19.0,5.55);
+\end{tikzpicture}
