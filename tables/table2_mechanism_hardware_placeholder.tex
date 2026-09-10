@@ -1,64 +1,27 @@
 \begin{table*}[t!]
   \centering
-  \caption{Integrated architecture-neutral outcomes, conformance diagnostics,
-  and compact hardware validation. B$_{\rm ext}$ denotes the COHERENT-adapted
-  comparator and is evaluated only with neutral system outcomes. All unknown
-  quantities remain \textbf{***}; dashes mark inapplicable measures.}
-  \label{tab:mechanism_hardware_results}
+  \caption{Integrated architecture-neutral comparison under matched static,
+  physical-only dynamic, semantic-event, and combined dynamic conditions.
+  COHERENT-adapted is an external comparator evaluated only on neutral system
+  outcomes. Lower is better for makespan and unaffected interruption. Every
+  \textbf{***} entry is an unmeasured placeholder and encodes no result.}
+  \label{tab:integrated_results}
+  \setlength{\tabcolsep}{5.0pt}
+  \renewcommand{\arraystretch}{1.10}
   \small
-  \renewcommand{\arraystretch}{1.08}
-
-  \textbf{(a) Integrated simulation outcomes}
-  \\
-  \setlength{\tabcolsep}{4.2pt}
-  \begin{tabular}{lcccccc}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lccccc}
     \toprule
     Method &
     \shortstack{Task success\\(\%) $\uparrow$} &
     \shortstack{Obligation\\completion (\%) $\uparrow$} &
     \shortstack{Event recovery\\(\%) $\uparrow$} &
     \shortstack{Makespan\\(s) $\downarrow$} &
-    \shortstack{Semantic calls\\(count) $\downarrow$} &
-    \shortstack{Unaffected\\interruptions (\%) $\downarrow$} \\
+    \shortstack{Unaffected\\interruption (\%) $\downarrow$} \\
     \midrule
-    Proposed & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    B$_{\rm ext}$: COHERENT-adapted & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    B3: Global revalidation & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    Proposed             & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    Global revalidation  & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    COHERENT-adapted      & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
     \bottomrule
-  \end{tabular}
-
-  \vspace{4pt}
-  \textbf{(b) Same-batch and continuation conformance}
-  \\
-  \setlength{\tabcolsep}{6.0pt}
-  \begin{tabular}{lcccc}
-    \toprule
-    Configuration &
-    \shortstack{Affected coverage\\(\%) $\uparrow$} &
-    \shortstack{Unaffected interruption\\(\%) $\downarrow$} &
-    \shortstack{Stale completion\\accepted (\%) $\downarrow$} &
-    \shortstack{Compatible completion\\rejected (\%) $\downarrow$} \\
-    \midrule
-    Proposed & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    A$_{\mathrm{cont}}$: No selective continuation & \textbf{***} & \textbf{***} & -- & -- \\
-    A$_{\mathrm{evid}}$: No evidence compatibility & -- & -- & \textbf{***} & \textbf{***} \\
-    \bottomrule
-  \end{tabular}
-
-  \vspace{4pt}
-  \textbf{(c) Compact real-robot validation}
-  \\
-  \setlength{\tabcolsep}{4.5pt}
-  \begin{tabular}{lccccc}
-    \toprule
-    Property & Trials &
-    \shortstack{Task success\\(\%) $\uparrow$} &
-    \shortstack{Event recovery\\(\%) $\uparrow$} &
-    \shortstack{Event-to-directive\\latency (s) $\downarrow$} &
-    \shortstack{Unaffected interruption\\(\%) $\downarrow$} \\
-    \midrule
-    H1: Heterogeneous authorization & \textbf{***} & \textbf{***} & -- & -- & \textbf{***} \\
-    H2: Dynamic execution + semantic event & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    \bottomrule
-  \end{tabular}
+  \end{tabular}}
 \end{table*}

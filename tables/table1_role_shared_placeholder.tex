@@ -1,32 +1,31 @@
 \begin{table*}[t!]
   \centering
   \caption{Role-shared semantic coordination under matched task, observation,
-  capability, and event inputs. Task success and obligation completion are
-  architecture-neutral outcomes; the remaining columns diagnose C1. Lower is
-  better for invalid proposals and capability-invalid assignments, while
-  higher is better for completion and feasible-assignment recall. Replica
-  divergence is applicable only to B2. Every \textbf{***} entry is an
-  unmeasured placeholder and encodes no result.}
+  capability, and event inputs. Task success is the compact outcome; the
+  remaining columns diagnose explicit responsibility, one authoritative state,
+  and capability-aware assignment. Lower is better for invalid proposals,
+  replica divergence, and capability-invalid assignments, while higher is
+  better for feasible-assignment recall. Replica divergence is applicable only
+  to Replicated semantics. Every \textbf{***} entry is an unmeasured
+  placeholder and encodes no result.}
   \label{tab:role_shared_results}
   \setlength{\tabcolsep}{3.0pt}
   \renewcommand{\arraystretch}{1.10}
   \small
   \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lcccccc}
+  \begin{tabular}{lccccc}
     \toprule
     Method &
     \shortstack{Task success\\(\%) $\uparrow$} &
-    \shortstack{Obligation\\completion (\%) $\uparrow$} &
     \shortstack{Invalid\\proposals (\%) $\downarrow$} &
     \shortstack{Replica\\divergence (\%) $\downarrow$} &
     \shortstack{Capability-invalid\\assignments (\%) $\downarrow$} &
     \shortstack{Feasible-assignment\\recall (\%) $\uparrow$} \\
     \midrule
-    Proposed                         & \textbf{***} & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
-    B1: Monolithic central           & \textbf{***} & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
-    B2: Per-actuator replicas        & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
-    A$_{\mathrm{cap}}$: No capability grounding
-                                     & \textbf{***} & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
+    Proposed                         & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
+    Monolithic                       & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
+    Replicated semantics             & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} & \textbf{***} \\
+    No capability grounding          & \textbf{***} & \textbf{***} & --           & \textbf{***} & \textbf{***} \\
     \bottomrule
   \end{tabular}}
 \end{table*}
