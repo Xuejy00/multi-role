@@ -1,111 +1,85 @@
-\section{Problem Description}
+\section{Problem Formulation}
 \label{sec:formulation}
+
 \providecommand{\structurechange}[1]{#1}
-\providecommand{\finalchange}[1]{#1}
-\providecommand{\localexecchange}[1]{#1}
+\newtheorem{problem}{Problem}
 
-We consider a heterogeneous multi-arm manipulation team
-$\mathcal{R}=\{r_1,\ldots,r_N\}$ with $N\geq 2$. Each arm or suction
-manipulator is represented as an actuator-local execution entity $r_i$ with a
-capability set $\mathcal{C}_i$ that may differ in workspace, sensing, payload,
-end-effector, and admissible skills. The team receives a semantic objective
-$\gamma$ and policy-visible observations while multiple arms may already be
-executing. In this paper, ``multi-arm'' names this multiple-arm setting;
-``multi-robot'' is retained for the broader prior-work category and does not
-imply a mobile fleet. The scientific problem is to coordinate semantic
-interpretation and physical execution without assuming that either proceeds
-on the other's clock. \structurechange{The objects below define the system
-state, runtime changes, and coordination requirements;
-Sections~\ref{sec:role_shared_coordination}
-and~\ref{sec:semantic_physical_coordination} introduce the mechanisms that
-satisfy them.}
+\subsection{Heterogeneous Manipulator Team}
+\label{sec:system_description}
 
-The team maintains a versioned authoritative semantic state
+Consider a team of heterogeneous robotic manipulators
 \begin{equation}
-S^{\mathrm{sem}}_{\nu}=(\gamma,G,\mathcal{F},a,z),
-\label{eq:semantic_state}
+ \mathcal{R}\triangleq\{r_i\}_{i=1}^{N},
+ \label{eq:manipulator_team}
 \end{equation}
-where $\nu$ identifies a committed state version. In
-Eq.~\eqref{eq:semantic_state}, $G=(\mathcal{V},\mathcal{E})$ is a labelled
-dependency graph of semantic obligations. The relation $\mathcal{F}$ records
-semantic object identities and the currently interpreted affordance and
-capability facts. The partial map
-$a:\mathcal{V}\rightharpoonup\mathcal{R}$ assigns obligations to actuators, and
-$z$ records semantic obligation status. Each $v\in\mathcal{V}$ has a stable
-identity, a target binding $q_v$ when required, capability requirements,
-preconditions, an intended semantic effect, a bounded public skill $\kappa_v$,
-and semantic guards $\psi_v$. \structurechange{The target binding $q_v$
-references an identity represented in $\mathcal{F}$ and cannot be changed by
-actuator-local execution.} An edge $(v_j,v_k)\in\mathcal{E}$ means that the
-verified effect of $v_j$ is required by $v_k$. It neither prescribes a
-controller trajectory nor creates a barrier for obligations that do not consume
-that effect.
+where $N$ is the number of manipulators and $r_i$ has capability set
+$\mathcal{C}_i$.  A capability set describes the primitive actions, targets,
+and embodiment conditions available to the corresponding manipulator.  The
+system receives a natural-language task $\gamma$ and continuous visual
+observations $o(t)$ while the physical workspace evolves.
 
-\subsection{Runtime Events and Physical Evolution}
-
-Let $x^{\mathrm{phys}}(t)$ collect the environment and actuator-local physical
-states. Local observations $o_i(t)$ measure this state, and each
-\localexecchange{actuator-local controller uses current visual observations and
-any committed task-level authorization available to its actuator} to compute
-command $u_i(t)$. Between
-semantic events, the physical state evolves at its own rate as
+The execution process can also produce discrete semantic events
 \begin{equation}
-x^{\mathrm{phys}}(t+\Delta t)
-=\structurechange{f_{\mathrm{phys}}}\!\left(x^{\mathrm{phys}}(t),
-  \{u_i(t)\}_{i=1}^{N},w(t)\right),
-\label{eq:physical_evolution}
+ e_k\in\mathcal{E}\triangleq
+ \{e^{\texttt{task}},e^{\texttt{ext}},e^{\texttt{fail}}\},
+ \label{eq:semantic_events}
 \end{equation}
-where $w(t)$ denotes exogenous physical evolution such as conveyor or target
-motion. Equation~\eqref{eq:physical_evolution} treats observations as
-measurements used by \localexecchange{actuator-local controllers}, not as direct
-causal inputs to the physical transition. Persistent physical dynamics can
-change manipulation opportunities without requiring a semantic model call at
-every $\Delta t$.
+where $e^{\texttt{task}}$ denotes an online task update,
+$e^{\texttt{ext}}$ denotes an external disturbance, and
+$e^{\texttt{fail}}$ denotes an execution failure.  Continuous physical motion,
+including motion of a target on a conveyor, remains part of the evolving
+workspace and is not itself a semantic event.
 
-At semantic time $\tau_k$, let $\mathbf{e}_k$ be the finite batch of scene,
-task, and verification events \finalchange{processed against the same committed
-semantic state version}:
+\subsection{Online Primitive Command Sets}
+\label{sec:online_commands}
+
+The required output is an online sequence of command sets
 \begin{equation}
-\mathbf{e}_k\subseteq
-\mathcal{E}_{\mathrm{scene}}\cup
-\mathcal{E}_{\mathrm{task}}\cup
-\mathcal{E}_{\mathrm{verify}}.
-\label{eq:semantic_event_batch}
+ \mathbf{C}\triangleq
+ (\mathbf{c}_1,\mathbf{c}_2,\cdots,\mathbf{c}_M),
+ \label{eq:command_sequence}
 \end{equation}
-Equation~\eqref{eq:semantic_event_batch} groups co-occurring discrete evidence
-without treating persistent physical evolution as a semantic event. An
-exogenous scene event describes an externally induced change that may alter
-$\mathcal{F}$. An online task event changes $\gamma$ or the labelled graph. A
-verification event \structurechange{binds event-level execution evidence to its
-source obligation and originating committed semantic version.} These events
-define opportunities for semantic reconsideration; controller-rate observations
-and physical motion do not become semantic events merely because time advances.
+where $M$ is determined online and each $\mathbf{c}_m$ contains capability-valid
+commands that can be issued concurrently to the team.  The internal command
+fields are defined in Section~\ref{sec:construct_commands}, not in this problem
+formulation.
 
-\subsection{\structurechange{Coordination Problem and Requirements}}
+The next command set is generated online from the task, heterogeneous
+capabilities, visual history, semantic event history, and previously issued
+command sets:
+\begin{equation}
+ \mathbf{c}_m=
+ \Pi\!\left(
+ \gamma,\{\mathcal{C}_i\}_{i=1}^{N},o(0\!:\!t_m),
+ e_{1:k_m},\mathbf{c}_{1:m-1}\right),
+ \label{eq:online_command_generation}
+\end{equation}
+where $t_m$ is the decision time and $k_m$ is the number of semantic events
+observed by that time.  The ordering of the arguments preserves the information
+flow from task specification and embodiment capabilities to observations,
+events, and prior command sets.
 
-\structurechange{The coordination objective is to maintain coherent semantic
-commitments across heterogeneous actuators while valid physical work continues
-between semantic events. This requires unambiguous responsibility for semantic
-fields, capability-valid assignment, bounded semantic authorization, and
-reconsideration of obligations whose validity may have changed, without forcing
-semantic reasoning to operate at controller frequency.}
+\subsection{Online Coordination Problem}
+\label{sec:coordination_problem}
 
-\structurechange{The Semantic--Physical Interface denotes only the required
-boundary between authoritative semantic decisions and actuator-local execution.
-It is not an executable or independently versioned object. Semantic
-authorization crossing this boundary must remain bounded and associated with
-its originating semantic state, while controller trajectories, tracking state,
-servo targets, raw observations, and physical safety decisions remain local.}
+The physical workspace may change continuously between decision times, and the
+event stream may contain task updates, external disturbances, or execution
+failures.  The command sequence must support concurrent progress while
+respecting each manipulator's capability set and the dependencies induced by the
+task.  No scalar optimization objective is imposed in this formulation; the
+primary requirement is completion of the current task under the stated online
+information and execution conditions.
 
-\structurechange{\noindent\textbf{Problem Statement.}
-Given the heterogeneous team $\mathcal{R}$, its capabilities
-$\{\mathcal{C}_i\}_{i=1}^{N}$, a semantic objective $\gamma$, the current
-semantic state $S^{\mathrm{sem}}_{\nu}$, and runtime event batches
-$\mathbf{e}_k$, the coordination problem is to maintain coherent and
-capability-valid semantic commitments across actuators, reconsider commitments
-whose validity may have changed, and permit unaffected valid local execution to
-continue between semantic events. This must be achieved without admitting
-actuator-local writes to semantic task meaning or forcing semantic reasoning to
-operate at controller frequency. Sections~\ref{sec:role_shared_coordination}
-and~\ref{sec:semantic_physical_coordination} present the two method components
-that satisfy these requirements.}
+\begin{problem}[Online heterogeneous manipulation coordination]
+Given a natural-language task $\gamma$, a heterogeneous team $\mathcal{R}$ with
+capability sets $\{\mathcal{C}_i\}_{i=1}^{N}$, continuous visual observations
+$o(t)$, and event history from Eq.~\eqref{eq:semantic_events}, compute the online
+command-set sequence $\mathbf{C}$ from Eq.~\eqref{eq:command_sequence} such that
+the primitive commands are capability-valid, independent commands can execute
+concurrently, and the current task is completed despite continuous physical
+evolution and the possible occurrence of $e^{\texttt{task}}$,
+$e^{\texttt{ext}}$, or $e^{\texttt{fail}}$.
+\end{problem}
+
+The Method solves this problem through role-shared semantic coordination and
+event-driven updates that compile revised task decisions into executable commands.

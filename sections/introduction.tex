@@ -1,50 +1,44 @@
 \section{Introduction}
 \label{sec:introduction}
+
 \providecommand{\introchange}[1]{#1}
 \providecommand{\structurechange}[1]{#1}
 \providecommand{\localexecchange}[1]{#1}
 
-Multi-arm manipulation teams combine complementary workspaces, end-effectors,
-sensing, and payload capabilities. Their coordination becomes difficult when
-the physical opportunity changes while the semantic objective is also allowed
-to change. A target can move continuously on a conveyor, an external actor can
-add, remove, or relocate an object, and a user can revise the task during
-execution. These are distinct forms of runtime change: persistent physical
-dynamics, exogenous scene changes, and online task updates. They should not be
-treated as one undifferentiated dynamic-environment assumption.
+Heterogeneous multi-manipulator systems combine complementary workspaces,
+end-effectors, sensing, and payload capabilities.  Open-language manipulation
+tasks further require these embodiments to act concurrently while targets move,
+the scene changes, or execution fails.  Physical state therefore evolves
+continuously, whereas task-relevant semantic changes occur at discrete event
+boundaries.  A direct vision-and-language to action mapping does not expose the
+capability constraints, task dependencies, or responsibility interfaces needed
+to coordinate this combination.
 
-Large language and vision-language models provide useful semantic capabilities
-for interpreting instructions, grounding objects and skills, and revising task
-state from feedback~\cite{huang2023inner,liang2023code,rana2023sayplan}. Such
-reasoning is naturally event-driven, whereas perception, control, and target
-motion continue between semantic events. A useful system therefore needs an
-organization that keeps semantic authority coherent across heterogeneous arms
-while allowing valid physical execution to evolve locally. This motivates the
-question studied here: \emph{How should large-model semantic reasoning be
-organized and invoked to coordinate heterogeneous multi-arm manipulation across
-discrete semantic change and continuous physical evolution?}
+Large language and vision-language models provide semantic tools for interpreting
+instructions, grounding objects and skills, and revising task state from
+feedback~\cite{huang2023inner,liang2023code,rana2023sayplan}.  Their use in a
+heterogeneous team still requires one consistent semantic representation that
+can be read by multiple reasoning roles while local perception and control
+continue at a higher rate.  Independent semantic decisions can otherwise assign
+incompatible actions or obscure which information changed.  This motivates the
+following question: how can semantic reasoning be organized so that a team
+maintains shared task meaning, adapts only when a task-relevant event occurs, and
+continues valid physical execution between events?
 
-\introchange{The resulting research gap is organizational rather than
-model-internal. A heterogeneous team needs both explicit ownership of shared
-semantic fields and a rule for deciding when a runtime change warrants
-team-level semantic reconsideration rather than actuator-local adaptation.
-Without these distinctions, semantic responsibility and execution validity are
-not represented at their natural timescales.}
-
-Figure~\ref{fig:scenario} grounds this question in the canonical heterogeneous
-multi-arm conveyor workspace.
+Figure~\ref{fig:scenario} grounds this question in the heterogeneous conveyor
+workspace.  The physical scene illustrates the coexistence of complementary
+manipulators, moving targets, visual observations, task updates, disturbances,
+and execution failures.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/figure1_final.pdf}
-    \caption{Motivating heterogeneous multi-arm setting and high-level
-    coordination loop. A task instruction or online update is interpreted by
-    team-level Affordance, Planning, and Verification Roles through one shared
-    semantic state, which emits an execution directive to the heterogeneous
-    physical team. Scene observations and execution evidence close the loop
-    while the conveyor and objects continue to evolve. The Isaac Sim scene is
-    shown as physical grounding only; no task success or experimental result is
-    encoded.}
+    \caption{Scenario teaser for heterogeneous multi-manipulator coordination.
+    A task instruction and visual observations enter three semantic Roles that
+    maintain shared task and scene understanding, construct primitive commands,
+    and receive execution evidence.  The conveyor illustrates continuous
+    physical evolution; the scene is physical grounding rather than an
+    experimental result.}
     \label{fig:scenario}
 \end{figure}
 
@@ -52,43 +46,24 @@ multi-arm conveyor workspace.
 
 \subsection{Our Method}
 
-\localexecchange{We address this gap with the two coupled components summarized
-in Figure~\ref{fig:method_overview}. Role-Shared Semantic Coordination organizes
-the Affordance, Planning, and Verification Roles over one authoritative,
-versioned semantic state, with role-owned updates and capability-grounded
-assignments. Multi-Timescale Semantic--Physical Coordination routes discrete
-scene, task, and verification events to the responsible roles, selectively
-reconsiders affected obligations, and allows still-valid actuator-local
-execution to continue between events. The Semantic--Physical Interface names
-only the boundary at which role-owned semantic commitments become bounded
-Committed Execution Directives. Directive-governed actuator-local execution then
-realizes each selected public skill from current visual observations and local
-closed-loop control between semantic events.}
+The proposed method maintains one role-shared semantic representation for the
+current task, task dependencies, scene feasibility, assignments, and execution
+status.  Affordance, Planning, and Verification Roles contribute complementary
+information to this representation.  Task updates, external disturbances, and
+execution failures trigger selective reconsideration, while valid physical
+execution continues whenever the affected scope does not invalidate it.  The
+resulting primitive commands are issued concurrently to compatible
+manipulators and executed by their local skills.
 
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figures/figure2_final.pdf}
-    \caption{Overview of the proposed coordination framework. Team-level
-    Affordance, Planning, and Verification Roles update one authoritative
-    semantic state and route typed events through a versioned transaction.
-    \introchange{Committed execution directives connect that state to
-    heterogeneous actuator-local executors, whose physical observations and
-    local guards evolve between semantic events. Only event-level evidence
-    returns upward for selective semantic re-entry.}}
-    \label{fig:method_overview}
-\end{figure*}
-
-\introchange{The paper makes two contributions:}
+The paper makes two contributions:
 \begin{itemize}
-    \item \textbf{Role-Shared Semantic Coordination.}
-    \introchange{We organize affordance interpretation, task planning, and
-    semantic verification as team-level roles over one authoritative semantic
-    state, give each semantic field a role-authorized owner, and ground
-    assignments in heterogeneous actuator capabilities.}
+    \item \textbf{Role-Shared Semantic Representation.}  A single semantic
+    representation gives Affordance, Planning, and Verification Roles explicit
+    information responsibilities for task decomposition, capability-aware
+    assignment, and execution-effect assessment.
 
-    \item \textbf{Multi-Timescale Semantic--Physical Coordination.}
-    \introchange{We distinguish discrete semantic events from continuous
-    physical evolution, selectively reconsider only affected obligations, and
-    allow valid actuator-local execution to continue between events under local
-    observations and guards.}
+    \item \textbf{Selective Event-Scoped Reconsideration.}  Task updates,
+    external disturbances, and execution failures identify a bounded scope for
+    semantic revision, while compatible unaffected execution continues through
+    manipulator-local skills between event boundaries.
 \end{itemize}

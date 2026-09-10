@@ -1,191 +1,176 @@
-\providecommand{\experimentcolor}{}
-\experimentcolor
+\providecommand{\expplaceholder}{\textbf{***}}
+
 \section{Experiments}
 \label{sec:experiments}
 
-We evaluate the two paper-level contributions with matched physical skills and
-policy-visible observations. C1 asks whether a heterogeneous team benefits from
-explicit semantic responsibility. C2 asks when semantic reasoning should
-re-enter while physical execution continues. Directive-Governed Actuator-Local
-Execution in Section~III-C supports physical closure rather than defining a
-third contribution; conveyor motion is a controlled physical condition.
+The experiments evaluate whether role-shared semantic coordination improves
+heterogeneous manipulation and whether event-scoped updates preserve valid
+execution during adaptation.  All numerical entries in the current draft are
+explicit placeholders pending the final runs and do not encode a measured
+ranking.
 
-\subsection{Experimental Setup and Protocol}
+\subsection{Experimental Setup}
 \label{sec:experiment_setup}
 
-\noindent\textbf{Scenario and matched conditions.}
-The simulation uses the heterogeneous conveyor workspace in
-Figure~\ref{fig:scenario} with two Franka manipulators, suction actuators,
-RGB-D observations, and public local skills. Task, scene, event, and random
-seeds are paired across methods, while local tracking, grasp, motion, and
-safety stacks remain fixed. The primary conditions are (C1) approximately
-static physical state with no semantic event, (C2) continuous conveyor motion
-with no semantic event, (C3) static state with sparse semantic events, and (C4)
-continuous motion with the same sparse events. C2 is the physical-only
-negative control: changing image observations and tracking error does not, by
-itself, authorize semantic re-entry. C3 and C4 vary independent, sparsely
-coupled, and tightly coupled obligation graphs and a small or medium true
-affected fraction, separating physical difficulty from coordination effects.
+The evaluation uses the Isaac conveyor workspace in Figure~\ref{fig:scenario},
+with heterogeneous manipulators, static and moving targets, global visual
+observations, and the common primitive skill library.  Every method uses the
+same scene and task assets, physical controllers, local tracking and safety
+stack, observation interface, and task-success criteria.  The evaluation
+contains four conditions, denoted \texttt{C1}--\texttt{C4}, spanning static and
+dynamic scenes with and without semantic events.  The events are \texttt{E1},
+an online task update; \texttt{E2}, an external disturbance; and \texttt{E3},
+an execution failure confirmed from physical evidence.  Execution-failure
+trials use a stacked-object challenge in the static scene and a high-speed
+conveyor challenge in the dynamic scene.  Task instances and scene
+initializations are paired across methods.  Trial counts and other protocol
+values remain \textbf{TBD} until the final runs are frozen.
 
-\noindent\textbf{Events and ownership.}
-Episodes label P0 physical-only dynamics, S1 exogenous scene disruption, S2
-task update, and S3 verification/execution evidence. S1 scene facts route to
-the Affordance Role, S2 task fields to the Planning Role, and S3 status
-evidence to the Verification Role. Event detection and routing are scored
-separately from semantic field ownership; Verification does not write task
-goals, affordance fields, or assignments.
+The evaluation reports five metrics.  M1 is Task Success Rate, the fraction of
+tasks completed according to the task-success criterion.  M2 is Subtask
+Completion Rate, the fraction of primitive subtasks verified as completed.  M3
+is Makespan, measured from the first dispatch until task completion.  M4 is
+Event Response Time, measured from detection of a task-relevant event to the
+next committed semantic update.  M5 is LLM Cost, reported using the same token
+or call accounting for every method.  Failure Type Analysis is reported
+separately as qualitative evidence and is not an additional metric.
 
-\noindent\textbf{Compared methods.}
-B1 is a monolithic central semantic coordinator with the same shared
-information, validator, compiler, and physical stack, but without explicit
-role-owned deltas. B2 gives each actuator a complete semantic replica and
-rejects conflicting fields by a declared neutral rule. B3 receives the same
-semantic event boundaries as Proposed but globally revalidates eligible active
-and future obligations while remaining continuation-capable under local
-guards. A\textsubscript{cap}, A\textsubscript{cont}, A\textsubscript{evid},
-and A\textsubscript{event} are introduced only where their corresponding
-mechanism is tested. The external comparator is reserved for the
-architecture-neutral integrated comparison; its fairness conditions are stated
-with that comparison.
+\subsection{Main Results}
+\label{sec:main_results}
 
-\noindent\textbf{Evaluation.}
-The main outcomes are task success rate, obligation completion, event recovery
-success, makespan, and unaffected interruption rate. High-level semantic-call
-count is a secondary efficiency outcome. Table~\ref{tab:role_shared_results}
-diagnoses C1; Figure~\ref{fig:selective_reentry_results} diagnoses C2; and
-Table~\ref{tab:mechanism_hardware_results} with
-Figure~\ref{fig:integrated_execution_trace} reports integrated, conformance,
-and hardware evidence. The main text retains invalid-proposal, capability,
-scope, and stale-evidence diagnostics; compliance traces, detailed routing
-confusion, failure categories, model costs, and local-control quantities are
-supplementary. Proportions use Wilson intervals, and paired timing/count
-differences use bootstrap intervals with medians and IQR for skewed measures.
-Trial counts, seeds, and backend settings remain \textbf{OPEN / ***}.
+This subsection reports the performance of Ours in isolation across static,
+dynamic, and event-driven scenarios.  The evaluation uses Task Success Rate,
+Subtask Completion Rate, Makespan, Event Response Time, and LLM Cost to quantify
+final correctness, partial progress, completion duration, adaptation latency,
+and reasoning cost.  Static scenarios test coordination with
+fixed scene semantics, dynamic scenarios test execution with moving targets,
+and event scenarios test response to task-relevant changes during execution.
+All entries remain placeholders until the paired runs are frozen.
 
-\subsection{Role-Shared Semantic Coordination}
-\label{sec:exp_role_shared}
+Table~\ref{tab:main_metrics} collects the five primary metrics for Ours before
+any baseline or ablation interpretation.
 
-\noindent\textbf{Semantic authority and capability grounding.}
-Does explicit semantic responsibility and one authoritative state add value
-beyond strong centralized and replicated semantics? We compare Proposed, B1,
-B2, and A\textsubscript{cap} on paired mixed semantic-event traces and
-capability cases. The capability matrix changes admissible actuators through
-declared end-effector, sensing, workspace, target-support, and public-skill
-facts. Table~\ref{tab:role_shared_results} places task outcomes beside invalid
-proposals, replica divergence, capability-invalid assignments, and
-feasible-assignment recall. Numerical cells remain \textbf{***} until trials
-exist; no directional result is implied. The former no-unique-write variant is
-not repeated because B1 supplies that authority contrast, while unauthorized
-writes remain a compliance diagnostic.
+\input{tables/table10_main_metrics_placeholder.tex}
 
-\input{tables/table1_role_shared_placeholder.tex}
-
-\subsection{Semantic Event Discrimination and Selective Re-entry}
-\label{sec:exp_multi_timescale}
-
-\noindent\textbf{Physical-only negative control.}
-The first C2 question is whether persistent physical change stays local. Under
-C2/P0, Proposed is compared with A\textsubscript{event}, which treats every
-debounced meaningful observation change, including conveyor motion, as a
-semantic trigger. Figure~\ref{fig:selective_reentry_results}(a) reports the
-false semantic-trigger rate, separating local visual adaptation from semantic
-re-entry.
-
-\noindent\textbf{Selective affected-scope re-entry.}
-When an S1, S2, or S3 event is real, the question becomes what should
-re-enter. Proposed and B3 receive identical event boundaries; the comparison
-therefore isolates affected-scope reconsideration from event timing. Panel
-(b) of Figure~\ref{fig:selective_reentry_results} reports affected coverage
-and excess reconsideration across the dependency couplings and affected
-fractions in C3/C4. B3 is a scope-control reference, not an independent event
-detector.
-
-\noindent\textbf{Physical continuity.}
-Eligible unaffected directives should continue while the affected semantic
-scope is processed. A\textsubscript{cont} holds active directives during the
-semantic transaction, allowing the paired comparison to expose the cost of
-losing selective continuation. Figure~\ref{fig:selective_reentry_results}
-also reports event-to-commit latency and unaffected interruption in panels
-(c)--(d). Any safety or local-guard stop is logged separately from semantic
-interruption.
+Figure~\ref{fig:main_results} provides the corresponding compact trend layout.
+It reports Ours for the three scenario groups without introducing baseline or
+ablation labels.
 
 \begin{figure*}[t!]
   \centering
   \resizebox{0.98\textwidth}{!}{%
-    \input{figures/figure3_selective_reentry_placeholder.tex}}
-  \caption{Semantic-event discrimination and selective re-entry. The four
-  panels show (a) false semantic-trigger rate under physical-only P0 motion,
-  (b) affected coverage and excess reconsideration for S1--S3 events,
-  (c) event-to-commit latency, and (d) interruption of eligible unaffected
-  directives. C1--C4 and the Proposed/B3/A\textsubscript{event} labels are
-  fixed before trials; B3's event boundary is a controlled input. Every
-  \textbf{***} region is an unmeasured placeholder and encodes no trend.}
-  \label{fig:selective_reentry_results}
+    \input{figures/figure5_main_quantitative_placeholder.tex}}
+  \caption{Placeholder main results for Ours in static, dynamic, and
+  event-driven scenarios.  The panels reserve Task Success Rate, Subtask
+  Completion Rate, and Makespan slots; the \textbf{***} marks are unmeasured.}
+  \label{fig:main_results}
 \end{figure*}
 
-\noindent\textbf{Same-batch evidence compatibility.} We cross old completion
-evidence with target replacement, obligation withdrawal, intended-effect
-change, unrelated edit, no defining change, ambiguity, and failure in one
-same-batch matrix. Proposed and A\textsubscript{evid} are compared using the
-stale-completion acceptance and compatible-completion rejection quantities in
-Table~\ref{tab:mechanism_hardware_results}(b). Rejecting all old evidence is
-not a valid success criterion; this block closes the C2 conformance test
-rather than defining a separate contribution.
+For event scenarios, M4 response time, affected-scope coverage, and continuation
+of valid unaffected work are reported in Figure~\ref{fig:event_results}.
+Normal conveyor motion is handled by local tracking and is not counted as a
+semantic event.  The event-response entries remain unmeasured placeholders.
 
-\subsection{Integrated Dynamic and Real-Robot Validation}
-\label{sec:exp_integrated}
+\begin{figure}[t!]
+  \centering
+  \resizebox{0.98\columnwidth}{!}{%
+    \input{figures/figure6_event_response_placeholder.tex}}
+  \caption{Placeholder event-response results for Ours.  The panels reserve
+  response time, affected-scope coverage, and continuation of valid unaffected
+  work; all \textbf{***} marks await measurement.}
+  \label{fig:event_results}
+\end{figure}
 
-\noindent\textbf{Integrated comparison.}
-Do the mechanisms preserve architecture-neutral task behavior under static and
-continuously dynamic conditions? Proposed, \emph{COHERENT-adapted}~\cite{liu2025coherent}, and B3
-where feasible receive matched tasks, observations, event schedules, and local
-skills. The adapted comparator preserves COHERENT's published centralized Task
-Assigner and Proposal--Execution--Feedback--Adjustment loop, but is mapped to
-the same Isaac observations, public skills, validators, and safety stack. It
-does not receive role ownership, affected-set closure, directive lifecycle,
-same-batch compatibility, or the P0 event gate, and is evaluated only with
-neutral outcomes. Table~\ref{tab:mechanism_hardware_results}(a) reports task
-success, obligation completion, event recovery, makespan, semantic-call count,
-and unaffected interruption over C1--C4. The recovery chain is read as event
-recognition/routing, semantic update handling, directive revision or valid
-continuation, physical completion/recovery, and final task success.
+\subsection{Comparison with Baselines}
+\label{sec:baseline_comparison}
 
-\input{tables/table2_mechanism_hardware_placeholder.tex}
+The comparison uses three baselines under the same scene, task, observation,
+skill, and success protocols.  B1 is End-to-End LLM Skill Assignment and maps
+the task and scene directly to global skill commands.  B2 is One-LLM-per-
+Manipulator Skill Sequencing and gives each manipulator an independent skill
+sequence without an authoritative joint plan.  B3 is COHERENT-adapted and
+retains the coordination logic of COHERENT~\cite{liu2025coherent} while using
+the common primitive execution interface.  Table~\ref{tab:main_comparison}
+reports success rate, completion performance, and makespan across the static,
+dynamic, and event-driven conditions.  The comparison is interpreted only
+after the paired measurements are available.
 
-\noindent\textbf{Representative trace.}
-Figure~\ref{fig:integrated_execution_trace}(a) pairs the aggregate comparison
-with one semantic--physical trace: semantic versions, directive provenance,
-event routing, affected-scope disposition, local continuation, and terminal
-status. It is used to explain how a valid event produces a new commitment or a
-continuation without mutating an active directive; it does not replace the
-architecture-neutral outcome table. All result slots remain \textbf{***} until
-trials exist.
+\input{tables/table8_main_comparison_placeholder.tex}
+
+Failure Type Analysis is reported separately from M1--M5.  The analysis groups
+qualitative evidence into Invalid Command, Timeout Failure, Skill Execution
+Failure, and Collision Failure.  Figure~\ref{fig:failure_pie} reserves a pie
+chart for the category proportions, while Figure~\ref{fig:failure_cases}
+reserves scene-level evidence for representative cases.  All panels remain
+placeholders until failures are observed and classified.
+
+\begin{figure}[t!]
+  \centering
+  \resizebox{0.96\columnwidth}{!}{%
+    \input{figures/figure7_failure_pie_placeholder.tex}}
+  \caption{Placeholder failure-category proportions for Invalid Command,
+  Timeout Failure, Skill Execution Failure, and Collision Failure.  Slice sizes
+  are unmeasured and do not encode a ranking.}
+  \label{fig:failure_pie}
+\end{figure}
 
 \begin{figure*}[t!]
   \centering
   \resizebox{0.98\textwidth}{!}{%
-    \input{figures/figure4_integrated_trace_placeholder.tex}}
-  \caption{Integrated semantic--physical recovery trace and hardware evidence.
-  Panel (a) aligns piecewise-constant semantic versions, directive provenance,
-  continuous local execution, event recognition/routing, affected-scope
-  disposition, and final task status. Panel (b) reserves synchronized frames
-  for two Franka manipulators and one vehicle-mounted manipulator. The
-  \textbf{***} entries are placeholders and imply no outcome, duration, or
-  comparator trend.}
-  \label{fig:integrated_execution_trace}
+    \input{figures/figure7_failure_cases_placeholder.tex}}
+  \caption{Qualitative failure-scene placeholder for Invalid Command, Timeout
+  Failure, Skill Execution Failure, and Collision Failure.  Each panel reserves
+  a scene frame and the corresponding verification trace; no category count is
+  implied.}
+  \label{fig:failure_cases}
 \end{figure*}
 
-\noindent\textbf{Hardware credibility slice.}
-The physical team is two Franka manipulators and one vehicle-mounted/mobile
-manipulator. H1 tests meaningful heterogeneous authorization and concurrent
-execution. H2 combines continuous physical execution with one reproducible S1
-or S3 event while an unrelated directive is locally eligible. Hardware does
-not repeat the full baseline matrix; low-level control, tracking, navigation,
-grasping, and safety remain supporting realization. Table~\ref{tab:mechanism_hardware_results}(c)
-and Figure~\ref{fig:integrated_execution_trace}(b) report task outcome, event
-recovery, response latency, unaffected interruption, and compliance quantities
-as \textbf{***} placeholders. Physical failures are classified separately
-from event recognition, semantic proposal, capability-grounding, affected-
-scope, and stale-evidence failures.
+\begin{figure*}[t!]
+  \centering
+  \resizebox{0.98\textwidth}{!}{%
+    \input{figures/figure9_failure_qualitative_placeholder.tex}}
+  \caption{Qualitative semantic-structure update placeholder.  The layout compares the
+  semantic structure before an event with the original and updated graph and
+  assignment for E1, E2, and E3; affected vertices are highlighted.}
+  \label{fig:failure_scenes}
+\end{figure*}
 
-\normalcolor
+\subsection{Ablation Study}
+\label{sec:ablation}
+
+The ablation study isolates the two method contributions.  A1 removes explicit
+role sharing while retaining shared information, event handling, and the common
+physical stack.  A2 retains the role structure but replaces selective
+event-driven updates with global reconsideration of unfinished subtasks.
+Table~\ref{tab:ablation_compact} reports task success, completion performance,
+event response, and makespan.  Placeholder cells are not interpreted as
+evidence.
+
+\input{tables/table9_ablation_compact_placeholder.tex}
+
+\subsection{Hardware Experiments}
+\label{sec:hardware_experiments}
+
+The hardware platform comprises two fixed Franka manipulators and one xArm
+manipulator mounted on a mobile base in the conveyor workspace.  The planned
+demonstration requires the heterogeneous team to execute concurrent primitive
+commands while handling both an online task update and an external disturbance
+introduced by a human.  It evaluates whether shared semantic reasoning can
+revise the affected task scope while valid manipulator execution continues.
+Measured outcomes remain \textbf{TBD} until the hardware runs are completed.
+
+\begin{figure*}[t!]
+  \centering
+  \resizebox{0.98\textwidth}{!}{%
+    \input{figures/figure8_hardware_experiment_placeholder.tex}}
+  \caption{Placeholder hardware evaluation with two fixed Franka manipulators
+  and a mobile xArm manipulator in the conveyor workspace.  The panels reserve
+  the full setup, concurrent execution, online task update, human disturbance,
+  and continued execution after revision.  No panel is a measured result.}
+  \label{fig:hardware_experiments}
+\end{figure*}
+
+The final report will replace every placeholder with measured outcomes and will
+state the interpretation supported by the paired trials.  Detailed token or
+retry accounting, the complete event matrix, and internal failure labels remain
+in the experiment specification rather than in the main paper body.

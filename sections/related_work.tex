@@ -23,7 +23,7 @@ semantic sub-operations, visual/action tools, and feedback-driven recovery.
 Both papers therefore connect semantic planning with physical execution and
 verification. The present paper studies team-level Affordance, Planning, and
 Verification Roles over authoritative semantic state, followed by
-actuator-local execution and versioned event re-entry. The comparison is
+manipulator-local execution and versioned event re-entry. The comparison is
 structural: properties not specified in the public description of He et al.,
 such as shared state or scheduling semantics, are not treated as absent.
 
@@ -34,10 +34,10 @@ correspondence to a selected object across observations~\cite{liu2023target};
 hybrid global and eye-in-hand sensing and final-phase image-based servoing are
 also established~\cite{cuevas2018hybrid,haviland2020finalphase}. Chen et
 al.~\cite{chen2025adaptivegrasp} combine global-to-local observation with
-static-to-dynamic planning for moving clutter. \localexecchange{We use these
-established mechanisms as physical ingredients within vision-driven
-actuator-local skills; they do not define a standalone method component and are
-not claimed independently.}
+static-to-dynamic planning for moving clutter. \localexecchange{These
+established mechanisms serve as physical ingredients within vision-driven
+manipulator-local skills; they do not define a standalone method component and
+are not claimed independently.}
 
 Execution monitoring, continual planning, behavior-tree replanning, and
 feedback-driven recovery address runtime deviations~\cite{pettersson2005execution,
@@ -46,8 +46,7 @@ systems likewise use perceptual feedback, plan verification, or dedicated
 verification agents to revise semantic action sequences~\cite{huang2023inner,
 rana2023sayplan,he2026closedloop}. The remaining question is how such semantic
 events interact with physical work that may remain valid and continue locally.
-Our method makes this interaction explicit: scene, task, and verification
-events are routed to their role owners, the affected obligation scope is
-constructed from semantic dependencies, and active
-\introchange{execution commitments} receive bounded complete,
-continue, hold, or revoke dispositions.
+The present method makes this interaction explicit: scene, task, and
+verification events are routed through role-specific responsibilities, the
+affected subtask scope is constructed from semantic dependencies, and valid
+unaffected execution continues whenever the revised state permits it.

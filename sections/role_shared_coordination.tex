@@ -1,236 +1,106 @@
-\providecommand{\structurechange}[1]{#1}
-\providecommand{\formalchange}[1]{#1}
-\providecommand{\finalchange}[1]{#1}
-\providecommand{\localexecchange}[1]{#1}
-\section{\structurechange{Proposed Solution}}
+\section{Method}
 \label{sec:proposed_solution}
 
-\localexecchange{As illustrated in Figure~\ref{fig:method_overview}, the
-proposed solution comprises two coordination components and their
-actuator-local execution realization. Section~\ref{sec:role_shared_coordination}
-defines semantic responsibility and authoritative commitments through the
-Affordance, Planning, and Verification Roles. Section~\ref{sec:semantic_physical_coordination}
-defines event-driven selective semantic re-entry and the directive lifecycle.
-Section~\ref{sec:actuator_local_execution} then explains how committed
-directives govern vision-driven actuator-local skill execution between semantic
-events; it is not a third contribution.}
+Figure~\ref{fig:method_overview} summarizes the information flow from the task
+and visual observations to concurrent manipulator execution.  The method uses
+one shared semantic state with explicit Affordance, Planning, and Verification
+responsibilities.  The state is revised selectively when task-relevant evidence
+changes, and its graph and assignments are compiled into primitive commands.
 
-\subsection{\structurechange{Role-Shared Semantic Coordination}}
+\begin{figure*}[t]
+  \centering
+  \resizebox{0.96\textwidth}{!}{%
+    \input{figures/figure2_framework_placeholder.tex}}
+  \caption{Placeholder overview of the Role-Shared Semantic Coordination
+  Framework.  A four-manipulator simulation scene provides task and visual
+  inputs to the Affordance, Planning, and Verification Roles.  The Roles
+  maintain the shared semantic state, including graph $G$ and assignment $a$,
+  before command dispatch; a task-relevant event returns to the state-update
+  path.}
+  \label{fig:method_overview}
+\end{figure*}
+
+\subsection{Construct the Role-Shared Semantic State}
 \label{sec:role_shared_coordination}
 
-\structurechange{This subsection presents the first coordination component:
-who holds semantic responsibility in a heterogeneous multi-arm team.} The method organizes semantic
-capability by team-level role rather than by replicating a complete semantic
-stack for every actuator. The Affordance, Planning, and Verification Roles
-exercise distinct authority over the versioned $S^{\mathrm{sem}}_{\nu}$ defined
-in Section~\ref{sec:formulation}; actuator-local executors receive only bounded
-physical authority. A semantic role denotes a responsibility and interface, not
-a required number of software objects, model calls, or deployed processes.
-
-\subsubsection{\structurechange{Roles and Shared Authority}}
+\subsubsection{Define the Shared Semantic State}
 \label{sec:shared_semantic_state}
 
-Role sharing separates responsibility without partitioning task truth. All
-committed role outputs refer to the same version of objective $\gamma$, obligation graph
-$G$, affordance relations $\mathcal{F}$, assignment $a$, and status $z$ in
-$S^{\mathrm{sem}}_{\nu}$. Stable obligation and target identities connect these
-semantic records to evidence returned by multiple physical executors.
-
-\noindent\textbf{Affordance Role.}
-This role answers what is currently possible. It interprets semantic object
-identity from policy-visible scene evidence and updates the relevant identity,
-affordance, and capability facts in $\mathcal{F}$. It neither binds those
-identities to obligations nor selects an actuator, and it does not produce
-metric targets or trajectories. An
-exogenous scene-change event can reopen this interpretation for the affected
-objects or relations before planning reconsideration is requested.
-
-\noindent\textbf{Planning Role.}
-This role answers what the heterogeneous multi-arm team should do. Given
-$\gamma$, $\mathcal{F}$, and the current $S^{\mathrm{sem}}_{\nu}$, it owns
-semantic obligations, their target bindings, dependency structure, public-skill
-selection, semantic guards, and capability-valid assignment. An
-online task update enters through this role to add, withdraw, modify, or
-reprioritize affected obligations. The role does not issue controller-rate
-commands, visual-servo corrections, metric target tracks, or contact actions.
-
-\noindent\textbf{Verification Role.}
-This role answers whether an intended semantic effect occurred and whether
-semantic reconsideration is required. It consumes event-level execution
-evidence bound to an obligation and \structurechange{the originating semantic
-version recorded in its directive} and updates semantic status $z$ in the same
-event transaction. It
-does not receive every controller or perception sample, and it does not
-independently rewrite the future graph. A local skill can finish physically
-without its semantic postcondition being accepted; when verification is
-required, only the latter satisfies dependent obligations.
-
-\structurechange{Formally, let $\rho_A$, $\rho_P$, and $\rho_V$ denote the
-Affordance, Planning, and Verification role operators. Each operator produces a
-typed delta $d$ and a footprint $\chi(d)$ containing the semantic facts changed
-by that delta. Their write authority is}
+The common representation read and updated by the three Roles is
 \begin{equation}
-\structurechange{\begin{aligned}
-\rho_A &: (e^{\mathrm{scene}},S^{\mathrm{sem}}_{\nu})
-          \mapsto d_A=(\Delta\mathcal{F},\chi_A),\\
-\rho_P &: (\xi_P,\formalchange{S})
-          \mapsto d_P=(\Delta(\gamma,G,a),\chi_P),\\
-\rho_V &: (e^{\mathrm{verify}},S^{\mathrm{sem}}_{\nu})
-          \mapsto d_V=(\Delta z,\chi_V).
-\end{aligned}}
-\label{eq:role_authority}
+ S_\nu^{\mathrm{sem}}\triangleq
+ \bigl(\gamma,G,\mathcal{F},a,z\bigr),
+ \label{eq:semantic_state}
 \end{equation}
-\formalchange{In Eq.~\eqref{eq:role_authority}, the footprint notation is
-$\chi(d_A)=\chi_A$, $\chi(d_P)=\chi_P$, and $\chi(d_V)=\chi_V$. The input
-$\xi_P$ denotes either a direct online task event paired with
-$S=S^{\mathrm{sem}}_{\nu}$ or an affected-scope planning request paired with
-$S=\bar S_k$ after the initial role-owned deltas have been merged. These
-are two uses of the same Planning Role within one semantic transaction: the
-first interprets the task edit, whereas the second revalidates or repairs only
-the affected scope. The latter does not grant Planning write authority over
-$\mathcal{F}$ or $z$. A verification event is the input to $\rho_V$, and its
-status update is part of the same transaction, avoiding a recursive
-verification event.}
-
-Because the three roles update one authoritative state, a revised affordance,
-plan, assignment, or verification status is not maintained as a separate
-semantic world inside an executor. The roles bound which fields may change and
-which evidence justifies the change; they do not prescribe a particular model
-deployment topology.
-
-\subsubsection{\structurechange{Role-Shared Trace Invariant}}
-\label{sec:role_shared_invariant}
-
-\formalchange{We write $c_v$ for the committed execution directive associated
-with obligation $v$ and $\nu_v$ for its originating semantic version; its full
-tuple is defined in Eq.~\eqref{eq:committed_directive}. Here, an active
-directive retains execution authority, and a committed semantic version is one
-that has been atomically published as authoritative.}
-
-The scientific object of Fold I is the admissible semantic trace, not the
-placement of software modules. \structurechange{Let
-$\operatorname{own}_i(s)$ denote the authority over semantic field $s$ as seen
-by executor $r_i$, and let $\operatorname{own}(s)$ be its unique team-level
-writer.} \finalchange{For the invariant below,
-$\operatorname{consistent}(c_v,S^{\mathrm{sem}}_{\nu_v})$ requires the
-obligation definition referenced by $v$, target $q_v$, assignment $a(v)$,
-bounded skill $\kappa_v$, and semantic guards $\psi_v$ carried by $c_v$ to
-equal the fields authorized in its originating state.} \structurechange{Every
-admissible execution trace must satisfy}
+where $\nu$ is the semantic version, $\gamma$ is the current task,
+$\mathcal{F}$ contains task-relevant scene and feasibility facts, $a$ is the
+manipulator-and-skill assignment, and $z$ records primitive-subtask status.
+The dependency graph and each of its nodes are defined by
 \begin{equation}
-\structurechange{\begin{aligned}
-\mathcal{I}_{\mathrm{RS}}:\quad
-&\operatorname{own}_i(s)=\operatorname{own}_j(s)
- =\operatorname{own}(s),\\
-&\hspace{2em}\forall i,j,\quad
- s\in\operatorname{fields}(S^{\mathrm{sem}}),\\
-&\Delta s\neq\varnothing\Rightarrow
- \operatorname{writer}(\Delta s)=\operatorname{own}(s),\\
-&\Delta_{r_i}S^{\mathrm{sem}}=\varnothing,\quad \forall i,\\
-&\finalchange{c_v\ \text{active}\Rightarrow
- \operatorname{committed}(S^{\mathrm{sem}}_{\nu_v})}\\
-&\finalchange{\hspace{2em}\land
- \operatorname{consistent}(c_v,S^{\mathrm{sem}}_{\nu_v}).}
-\end{aligned}}
-\label{eq:role_shared_invariant}
+ G\triangleq\bigl(\mathcal{N},\mathcal{L}\bigr),
+ \qquad
+ n\triangleq\bigl(s_n,q_n,\eta_n\bigr),
+ \label{eq:primitive_task_graph}
 \end{equation}
-\finalchange{Equation~\eqref{eq:role_shared_invariant} requires one writer for
-each semantic field, an originating committed semantic version and
-version-consistent semantic payload for every active directive, and zero
-semantic write authority at actuator-local executors.}
-Consequently, an execution violates the role-shared organization if an executor
-rebinds a target, if Planning asserts semantic completion, if Verification
-rewrites future obligations, or if different arms act from conflicting semantic
-commitments without the revalidation in
-Section~\ref{sec:semantic_physical_coordination}. These violations are defined
-independently of whether the roles are implemented by one process, several
-processes, or one or more model calls.
+where $\mathcal{N}$ is the set of primitive-subtask nodes, $\mathcal{L}$ is the
+set of dependency links, $s_n$ is the primitive subtask, $q_n$ is its target,
+and $\eta_n$ is its intended effect.  A link $(n_i,n_j)\in\mathcal{L}$ means
+that $n_j$ depends on completion of $n_i$; capability and controller state are
+not encoded in the graph.
 
-A monolithic coordinator can implement this invariant, but a decomposition into
-three named functions does not establish it. The distinction is whether
-observable updates satisfy role-owned writes and version-consistent
-\structurechange{directives}.
-Conversely, several deployed components can implement one semantic role when
-their outputs share the same authority and commit rule. This makes role sharing
-a constraint on state transitions rather than a claim about software topology
-or model-call cardinality.
+\subsubsection{Assign Responsibilities to Three Semantic Roles}
+\label{sec:semantic_roles}
 
-\subsubsection{\structurechange{Capability-Grounded Dependencies and Local Projections}}
-\label{sec:capability_dependencies}
+The Roles jointly maintain the state in Eq.~\eqref{eq:semantic_state}; they are
+responsibility interfaces rather than independent semantic systems.
 
-For obligation $v$, let $a(v)\in\mathcal{R}$ be its assignment and
-$\mathcal{C}(v)$ its capability requirements. \formalchange{The set
-$\mathcal{C}_i$ records relatively persistent intrinsic properties of actuator
-$r_i$, such as workspace class, end-effector type, sensing availability,
-payload class, and admissible public skills; $\mathcal{F}$ records the current
-task- and scene-dependent interpretation of reachability, affordance, and
-object--actuator compatibility.} Its dispatch readiness is
+\emph{Affordance Role.}  The Affordance Role maps a visual observation $o(t)$
+to the task-relevant facts $\mathcal{F}$.  These facts describe object identity,
+relations, affordances, and feasibility, but exclude continuous target pose,
+velocity, and controller state.  Refreshing the facts is not by itself semantic
+replanning.  During system initialization, objects detected in the visual
+observation are established as semantic targets, and each semantic target is
+maintained through a local tracking relation to the corresponding physical
+object.  When a primitive skill executes a command, the skill uses the semantic
+target to retrieve the currently tracked physical target state.  This preserves
+the flow from semantic target to local tracking to skill execution without
+adding target-state variables to the shared semantic representation.
+
+\emph{Planning Role.}  Planning first decomposes the current task using the
+facts and then assigns every primitive subtask using the heterogeneous
+capabilities:
 \begin{equation}
-\begin{aligned}
-\operatorname{ready}(v) \Longleftrightarrow {}&
-  \mathcal{C}(v)\subseteq\mathcal{C}_{a(v)}
-  \;\land\; \operatorname{pred}(v)\text{ verified}\\
-  &\land\; \operatorname{local}_{a(v)}(v)\text{ admissible},
-\end{aligned}
-\label{eq:task_readiness}
+ \begin{aligned}
+ G&=\rho_P^G\bigl(\gamma,\mathcal{F}\bigr),\\
+ a&=\rho_P^a\!\left(
+ G,\mathcal{F},\{\mathcal{C}_i\}_{i=1}^{N}\right),
+ \end{aligned}
+ \label{eq:planning_pipeline}
 \end{equation}
-\formalchange{where $\operatorname{local}_{a(v)}(v)$ is a bounded local
-admissibility certificate over current resource and safety conditions at the
-assigned actuator, rather than semantic access to raw physical state.}
-Capability grounding is an assignment-validity mechanism,
-not a separate contribution. Equation~\eqref{eq:task_readiness} keeps
-dependency status shared and semantic, while
-physical admissibility is evaluated locally.
+where $a(n)=(r_i,\kappa_n)$ assigns node $n$ to manipulator $r_i$ and
+a compatible local skill $\kappa_n$.  Both computations belong to one Planning
+Role and preserve the order from task decomposition to capability-aware
+assignment.
 
-Each actuator receives the version-consistent ordered projection
+\emph{Verification Role.}  Verification evaluates the intended effect of an
+executed primitive subtask against the current facts:
 \begin{equation}
-Q_i^{\nu}=\left\langle v\in\mathcal{V}\;\middle|\;a(v)=r_i\right\rangle
-\label{eq:local_projection}
+ z(n)=\rho_V\bigl(\mathcal{F},\eta_n\bigr),
+ \label{eq:verification_map}
 \end{equation}
-\formalchange{In Eq.~\eqref{eq:local_projection}, $Q_i^{\nu}$ denotes any
-execution view that respects the precedence relations induced by $G$ for
-obligations assigned to $r_i$; the method imposes no semantic precedence
-between unrelated obligations.} The
-$Q_i^{\nu}$ are execution
-views of $S^{\mathrm{sem}}_{\nu}$, not semantic copies. Cross-actuator preconditions
-are evaluated against verified shared status rather than another executor's
-queue position. Consequently, an unresolved dependency blocks obligations that
-consume it, while an unrelated ready obligation may proceed subject to its own
-resource, safety, and local guards. This is a selective readiness rule, not a
-claim of unconstrained asynchrony or improved concurrency.
+where $z(n)$ becomes $\texttt{COMPLETED}$ only when the evidence supports
+$\eta_n$.  Successful verification advances normal execution.  When a task
+update, external disturbance, or execution failure requires semantic revision,
+the Verification Role also interprets the event against the shared state and
+identifies the affected primitive subtasks, as detailed in
+Section~\ref{sec:affected_subtasks}.  Planning subsequently revises the graph
+and assignment within that scope.
 
-\subsubsection{\structurechange{Committed Execution Directives}}
-\label{sec:local_execution}
-
-\structurechange{The Semantic--Physical Interface denotes the conceptual
-boundary between authoritative semantic decisions and actuator-local execution.
-It is not an executable object and has no independently active or versioned
-instance. A dispatchable obligation crosses this boundary as a
-\emph{Committed Execution Directive}}
-\begin{equation}
-\structurechange{c_v=(v,q_v,a(v),\kappa_v,\psi_v,\nu_v),}
-\label{eq:committed_directive}
-\end{equation}
-\formalchange{Equation~\eqref{eq:committed_directive} defines the semantic
-commitment object that crosses the boundary.} \structurechange{Here, $\nu_v$
-identifies the committed semantic state from
-which the directive originates. For each ready obligation, Fold I commits the
-obligation and target identity, actuator assignment, bounded skill, semantic
-guards, and originating semantic version in $c_v$, then transfers the directive
-across the boundary. The directive excludes controller trajectories, controller
-commands, tracking state, servo targets, raw observations, simulator truth, and
-exogenous motion commands. \localexecchange{The directive's semantic fields
-remain fixed during local execution; Section~\ref{sec:actuator_local_execution}
-specifies how its vision-driven physical realization adapts between semantic
-events. Fold I owns the directive's semantic identity and validity, while Fold
-II governs semantic re-entry and the directive lifecycle.}}
-
-Completion or failure crosses the boundary as event-level evidence
-$y_i^{\mathrm{exec}}$ carrying the originating obligation and
-\structurechange{semantic version recorded in the directive}.
-Physical skill completion reports what occurred locally;
-the Verification Role determines whether that evidence satisfies the intended
-semantic effect. If reconsideration is required, the event returns affected
-obligations to the appropriate semantic role without allowing the local
-executor to silently change target identity, assignment, or
-\localexecchange{task-defining semantic fields}.
+Together, the three Roles maintain complementary components of one shared
+semantic state $S_\nu^{\mathrm{sem}}=(\gamma,G,\mathcal{F},a,z)$ in
+Eq.~\eqref{eq:semantic_state}.  The Affordance Role maintains
+the scene and feasibility facts $\mathcal{F}$, the Planning Role maintains the
+task graph and capability-aware assignment $(G,a)$, and the Verification Role
+maintains primitive-subtask status $z$.  The task instruction $\gamma$ remains
+the common specification read by all three Roles; none of the Roles defines an
+independent semantic state.
