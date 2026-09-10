@@ -11,6 +11,8 @@
 \usepackage{siunitx}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage[numbers]{natbib}
 \usepackage[bookmarks=true,hidelinks]{hyperref}
 
@@ -56,12 +58,10 @@
 \IEEEpeerreviewmaketitle
 
 \input{sections/introduction.tex}
-% II. Problem Description
+% II. Problem Formulation
 \input{sections/problem_formulation.tex}
-% III. Proposed Solution; subsection A is Role-Shared Semantic Coordination.
+% III. Proposed Solution: role ownership and multi-timescale coordination.
 \input{sections/role_shared_coordination.tex}
-% Proposed Solution subsections B and C: multi-timescale coordination and
-% directive-governed actuator-local execution.
 \input{sections/semantic_physical_coordination.tex}
 % IV. Experiments
 \input{sections/experiments.tex}
