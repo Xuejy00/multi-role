@@ -3,175 +3,170 @@
 \section{Experiments}
 \label{sec:experiments}
 
-The experiments evaluate whether role-shared semantic coordination improves
-heterogeneous manipulation and whether event-scoped updates preserve valid
-execution during adaptation.  All numerical entries in the current draft are
-explicit placeholders pending the final runs and do not encode a measured
-ranking.
+This section evaluates the role-shared semantic coordination framework in
+simulation and on the hardware platform described below.  The section follows
+the frozen experimental structure: setup, main results, baseline comparison,
+failure analysis, ablation, and hardware experiments.  No numerical result is
+reported in the current draft; every result cell and plotted measurement is
+reserved by \textbf{***} until the corresponding runs are completed.
 
-\subsection{Experimental Setup}
+\subsection{Experiment Setup}
 \label{sec:experiment_setup}
 
-The evaluation uses the Isaac conveyor workspace in Figure~\ref{fig:scenario},
-with heterogeneous manipulators, static and moving targets, global visual
-observations, and the common primitive skill library.  Every method uses the
-same scene and task assets, physical controllers, local tracking and safety
-stack, observation interface, and task-success criteria.  The evaluation
-contains four conditions, denoted \texttt{C1}--\texttt{C4}, spanning static and
-dynamic scenes with and without semantic events.  The events are \texttt{E1},
-an online task update; \texttt{E2}, an external disturbance; and \texttt{E3},
-an execution failure confirmed from physical evidence.  Execution-failure
-trials use a stacked-object challenge in the static scene and a high-speed
-conveyor challenge in the dynamic scene.  Task instances and scene
-initializations are paired across methods.  Trial counts and other protocol
-values remain \textbf{TBD} until the final runs are frozen.
+The experiments use the Isaac conveyor workspace shown in
+Figure~\ref{fig:scenario}.  The setup contains heterogeneous manipulators,
+static and moving targets, global visual observations, and the common
+primitive-skill interface.  All compared methods receive the same scene and
+task assets, observation interface, task-success criterion, local tracking
+stack, safety stack, and physical execution stack.  The simulation conditions
+are denoted \texttt{C1}--\texttt{C4} and cover static and dynamic scenes with
+and without task-relevant semantic events.  The event labels are \texttt{E1}
+for an online task update, \texttt{E2} for an external disturbance, and
+\texttt{E3} for an execution failure confirmed from physical evidence.
 
-The evaluation reports five metrics.  M1 is Task Success Rate, the fraction of
-tasks completed according to the task-success criterion.  M2 is Subtask
-Completion Rate, the fraction of primitive subtasks verified as completed.  M3
-is Makespan, measured from the first dispatch until task completion.  M4 is
-Event Response Time, measured from detection of a task-relevant event to the
-next committed semantic update.  M5 is LLM Cost, reported using the same token
-or call accounting for every method.  Failure Type Analysis is reported
-separately as qualitative evidence and is not an additional metric.
+The compared methods are Ours, End2End Planner, One Agent per Robot, and
+COHERENT-Adapted.  The ablation methods are w/o Role Separation and w/o
+Selective Replanning.  The evaluation records Task Success Rate, Subtask
+Completion Rate (SCR), Makespan, Semantic Reasoning Time Ratio, Event Response
+Time, and LLM Cost.  Task Success Rate measures completed tasks, SCR measures
+verified primitive-subtask completion, Makespan measures elapsed execution
+duration, Semantic Reasoning Time Ratio measures the fraction attributed to
+semantic reasoning, Event Response Time measures the interval from event
+detection to the next committed semantic update, and LLM Cost uses the common
+token or call accounting protocol.  Trial counts and all numerical protocol
+values are reserved for the final experiment log.
 
 \subsection{Main Results}
 \label{sec:main_results}
 
-This subsection reports the performance of Ours in isolation across static,
-dynamic, and event-driven scenarios.  The evaluation uses Task Success Rate,
-Subtask Completion Rate, Makespan, Event Response Time, and LLM Cost to quantify
-final correctness, partial progress, completion duration, adaptation latency,
-and reasoning cost.  Static scenarios test coordination with
-fixed scene semantics, dynamic scenarios test execution with moving targets,
-and event scenarios test response to task-relevant changes during execution.
-All entries remain placeholders until the paired runs are frozen.
-
-Table~\ref{tab:main_metrics} collects the five primary metrics for Ours before
-any baseline or ablation interpretation.
-
-\input{tables/table10_main_metrics_placeholder.tex}
-
-Figure~\ref{fig:main_results} provides the corresponding compact trend layout.
-It reports Ours for the three scenario groups without introducing baseline or
-ablation labels.
+The main-results evaluation reports Ours across the prescribed scenario
+conditions and examines whether event-driven updates preserve a selective
+assignment-aware graph revision.  The quantitative entries remain
+\textbf{***}, so this subsection does not imply a performance ranking.  The
+qualitative semantic-update layout is shown in Figure~\ref{fig:event_graph_update}.
 
 \begin{figure*}[t!]
   \centering
   \resizebox{0.98\textwidth}{!}{%
-    \input{figures/figure5_main_quantitative_placeholder.tex}}
-  \caption{Placeholder main results for Ours in static, dynamic, and
-  event-driven scenarios.  The panels reserve Task Success Rate, Subtask
-  Completion Rate, and Makespan slots; the \textbf{***} marks are unmeasured.}
-  \label{fig:main_results}
+    \input{figures/figure3_event_graph_update.tex}}
+  \caption{A common-layout visualization is reserved for the
+  event-driven update of the assignment-aware primitive graph.  Each row
+  follows $G_{\mathrm{assign}}\rightarrow E_i\rightarrow
+  G_{\mathrm{assign}}^{E_i}$ for \texttt{E1}, \texttt{E2}, and \texttt{E3}.
+  Blue dashed circles mark executed subtasks and red dashed circles mark the
+  affected scope; equal node positions make selective rather than global
+  revision explicit.  All graph states are qualitative placeholders until the
+  representative trace is selected.}
+  \label{fig:event_graph_update}
 \end{figure*}
-
-For event scenarios, M4 response time, affected-scope coverage, and continuation
-of valid unaffected work are reported in Figure~\ref{fig:event_results}.
-Normal conveyor motion is handled by local tracking and is not counted as a
-semantic event.  The event-response entries remain unmeasured placeholders.
-
-\begin{figure}[t!]
-  \centering
-  \resizebox{0.98\columnwidth}{!}{%
-    \input{figures/figure6_event_response_placeholder.tex}}
-  \caption{Placeholder event-response results for Ours.  The panels reserve
-  response time, affected-scope coverage, and continuation of valid unaffected
-  work; all \textbf{***} marks await measurement.}
-  \label{fig:event_results}
-\end{figure}
 
 \subsection{Comparison with Baselines}
 \label{sec:baseline_comparison}
 
-The comparison uses three baselines under the same scene, task, observation,
-skill, and success protocols.  B1 is End-to-End LLM Skill Assignment and maps
-the task and scene directly to global skill commands.  B2 is One-LLM-per-
-Manipulator Skill Sequencing and gives each manipulator an independent skill
-sequence without an authoritative joint plan.  B3 is COHERENT-adapted and
-retains the coordination logic of COHERENT~\cite{liu2025coherent} while using
-the common primitive execution interface.  Table~\ref{tab:main_comparison}
-reports success rate, completion performance, and makespan across the static,
-dynamic, and event-driven conditions.  The comparison is interpreted only
-after the paired measurements are available.
+The baseline comparison uses the same task, scene, observation, capability,
+skill, and success protocols for Ours, End2End Planner, One Agent per Robot,
+and COHERENT-Adapted.  Table~\ref{tab:baseline_tsr} reports the primary Task
+Success Rate across the eight specified conditions.  Figure~\ref{fig:baseline_secondary}
+reserves the corresponding secondary-metric trends for SCR, Makespan,
+Semantic Reasoning Time Ratio, and LLM Cost.  All entries are \textbf{***};
+the layouts do not encode a measured ordering.
 
-\input{tables/table8_main_comparison_placeholder.tex}
-
-Failure Type Analysis is reported separately from M1--M5.  The analysis groups
-qualitative evidence into Invalid Command, Timeout Failure, Skill Execution
-Failure, and Collision Failure.  Figure~\ref{fig:failure_pie} reserves a pie
-chart for the category proportions, while Figure~\ref{fig:failure_cases}
-reserves scene-level evidence for representative cases.  All panels remain
-placeholders until failures are observed and classified.
-
-\begin{figure}[t!]
-  \centering
-  \resizebox{0.96\columnwidth}{!}{%
-    \input{figures/figure7_failure_pie_placeholder.tex}}
-  \caption{Placeholder failure-category proportions for Invalid Command,
-  Timeout Failure, Skill Execution Failure, and Collision Failure.  Slice sizes
-  are unmeasured and do not encode a ranking.}
-  \label{fig:failure_pie}
-\end{figure}
+\input{tables/table1_baseline_tsr.tex}
 
 \begin{figure*}[t!]
   \centering
   \resizebox{0.98\textwidth}{!}{%
-    \input{figures/figure7_failure_cases_placeholder.tex}}
-  \caption{Qualitative failure-scene placeholder for Invalid Command, Timeout
-  Failure, Skill Execution Failure, and Collision Failure.  Each panel reserves
-  a scene frame and the corresponding verification trace; no category count is
-  implied.}
-  \label{fig:failure_cases}
+    \input{figures/figure4_baseline_secondary.tex}}
+  \caption{Four line-plot panels are reserved for the baseline comparison:
+  (a) Subtask Completion Rate, (b) Makespan, (c) Semantic Reasoning Time
+  Ratio, and (d) LLM Cost.  Each panel uses the common condition sequence
+  \texttt{C1}, \texttt{C2-E1}, \texttt{C2-E2}, \texttt{C2-E3}, \texttt{C3},
+  \texttt{C4-E1}, \texttt{C4-E2}, and \texttt{C4-E3}; every plotted value is
+  \textbf{***} and no trend or ranking is implied.}
+  \label{fig:baseline_secondary}
 \end{figure*}
 
+\subsection{Failure Analysis}
+\label{sec:failure_analysis}
+
+Failure analysis categorizes unsuccessful executions using four primary
+failure types.  Invalid Capability denotes an assignment that does not satisfy
+the selected manipulator's capability or reachable workspace, such as assigning
+suction to place a basket outside its usable workspace.  Execution Anomaly
+denotes a command whose physical execution condition changes, such as a
+downstream suction pick after the target has moved too far away and left the
+observation range.  Assignment Conflict denotes incompatible assignments in
+one command batch, such as assigning both a Franka arm and a suction
+manipulator to pick the same cola.  Task Timeout denotes failure to complete
+within the allowed time, including repeated replanning that does not yield a
+valid execution sequence.
+
+Figure~\ref{fig:failure_analysis} provides a two-part layout for these
+categories.  The upper part contains one schematic example for each failure
+type.  The lower part reserves one donut chart for each compared method, with
+the center label \texttt{Total: ***}.  The failure proportions remain
+unmeasured and are not interpreted in this draft.
+
 \begin{figure*}[t!]
   \centering
   \resizebox{0.98\textwidth}{!}{%
-    \input{figures/figure9_failure_qualitative_placeholder.tex}}
-  \caption{Qualitative semantic-structure update placeholder.  The layout compares the
-  semantic structure before an event with the original and updated
-  assignment-aware primitive graph for E1, E2, and E3; affected vertices are
-  highlighted.}
-  \label{fig:failure_scenes}
+    \input{figures/figure5_failure_analysis.tex}}
+  \caption{Qualitative and distributional failure analysis is reserved.
+  The upper panels define Invalid Capability, Execution Anomaly, Assignment
+  Conflict, and Task Timeout with schematic representative scenes; the lower
+  panels reserve one donut chart for Ours, End2End Planner, One Agent per Robot,
+  and COHERENT-Adapted.  All category shares and totals are \textbf{***}, so
+  the placeholder rings encode no method comparison.}
+  \label{fig:failure_analysis}
 \end{figure*}
 
 \subsection{Ablation Study}
 \label{sec:ablation}
 
-The ablation study isolates the two method contributions.  A1 removes explicit
-role sharing while retaining shared information, event handling, and the common
-physical stack.  A2 retains the role structure but replaces selective
-event-driven updates with global reconsideration of unfinished subtasks.
-Table~\ref{tab:ablation_compact} reports task success, completion performance,
-event response, and makespan.  Placeholder cells are not interpreted as
-evidence.
+The ablation study isolates the two method components named in the paper:
+role separation and selective replanning.  Table~\ref{tab:ablation_comparison}
+restricts the comparison to \texttt{C4-E1}, \texttt{C4-E2}, and
+\texttt{C4-E3}, and reports Task Success Rate, Makespan, and Event Response
+Time for Ours, w/o Role Separation, and w/o Selective Replanning.  Figure
+\ref{fig:ablation_failure_count} reserves absolute failure-count bars for the
+same methods and the four failure categories.  Every value is \textbf{***};
+the ablation layouts do not imply an effect before measurement.
 
-\input{tables/table9_ablation_compact_placeholder.tex}
+\input{tables/table2_ablation_comparison.tex}
+
+\begin{figure*}[t!]
+  \centering
+  \resizebox{0.86\textwidth}{!}{%
+    \input{figures/figure6_ablation_failure_count.tex}}
+  \caption{Absolute failure counts are reserved for the ablation study.
+  Bars are grouped by Invalid Capability, Execution Anomaly, Assignment
+  Conflict, and Task Timeout for Ours, w/o Role Separation, and w/o Selective
+  Replanning.  Every bar length is an unmeasured \textbf{***} placeholder and
+  does not encode a result.}
+  \label{fig:ablation_failure_count}
+\end{figure*}
 
 \subsection{Hardware Experiments}
 \label{sec:hardware_experiments}
 
-The hardware platform comprises two fixed Franka manipulators and one xArm
-manipulator mounted on a mobile base in the conveyor workspace.  The planned
-demonstration requires the heterogeneous team to execute concurrent primitive
-commands while handling both an online task update and an external disturbance
-introduced by a human.  It evaluates whether shared semantic reasoning can
-revise the affected task scope while valid manipulator execution continues.
-Measured outcomes remain \textbf{TBD} until the hardware runs are completed.
+The hardware platform follows the current setup: two fixed Franka manipulators
+and one xArm manipulator mounted on a mobile base in the conveyor workspace.
+The hardware demonstration is organized around concurrent primitive execution,
+an external disturbance, and an online task update.  Figure~\ref{fig:hardware_experiments}
+reserves three rows of five consecutive snapshots: normal execution, external
+disturbance, and task update.  The snapshot layout is schematic because no
+measured hardware frames are available in the current workspace; the original
+hardware configuration and row-level task descriptions are retained.
 
 \begin{figure*}[t!]
   \centering
   \resizebox{0.98\textwidth}{!}{%
-    \input{figures/figure8_hardware_experiment_placeholder.tex}}
-  \caption{Placeholder hardware evaluation with two fixed Franka manipulators
-  and a mobile xArm manipulator in the conveyor workspace.  The panels reserve
-  the full setup, concurrent execution, online task update, human disturbance,
-  and continued execution after revision.  No panel is a measured result.}
+    \input{figures/figure7_hardware_experiments.tex}}
+  \caption{The hardware demonstration layout uses two fixed
+  Franka manipulators and one mobile xArm manipulator.  The three rows contain
+  five consecutive snapshots for normal execution, external disturbance, and
+  task update, respectively, with a task description below each row.  The
+  boxes are editable schematic placeholders until the synchronized hardware
+  frames are available.}
   \label{fig:hardware_experiments}
 \end{figure*}
-
-The final report will replace every placeholder with measured outcomes and will
-state the interpretation supported by the paired trials.  Detailed token or
-retry accounting, the complete event matrix, and internal failure labels remain
-in the experiment specification rather than in the main paper body.
