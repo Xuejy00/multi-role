@@ -1,0 +1,51 @@
+\definecolor{figink}{HTML}{20252A}
+\definecolor{ours}{HTML}{2F6DA6}
+\definecolor{baseone}{HTML}{6F7C86}
+\definecolor{basetwo}{HTML}{9A6A43}
+\definecolor{basethree}{HTML}{7658A5}
+
+\begin{tikzpicture}[
+  x=1cm,y=1cm,
+  font=\sffamily\fontsize{6.5}{7.2}\selectfont,
+  line/.style={line width=.8pt},
+  axis/.style={draw=figink!70,line width=.45pt},
+  tick/.style={font=\sffamily\fontsize{5.0}{5.8}\selectfont,text=figink},
+  paneltitle/.style={font=\sffamily\bfseries\fontsize{7.2}{8.0}\selectfont},
+  legend/.style={font=\sffamily\fontsize{5.4}{6.2}\selectfont}
+]
+  \newcommand{\metricpanel}[3]{%
+    \begin{scope}[shift={(#1,#2)}]
+      \draw[axis] (0,0) rectangle (7.75,3.05);
+      \draw[axis] (0.35,.35)--(0.35,2.55);
+      \draw[axis] (.35,.35)--(7.35,.35);
+      \node[paneltitle,anchor=west] at (.48,2.78) {#3};
+      \node[tick,rotate=90] at (-.18,1.45) {placeholder value};
+      \foreach \x/\lab in {0.55/\texttt{C1},1.52/\texttt{C2-E1},
+        2.49/\texttt{C2-E2},3.46/\texttt{C2-E3},4.43/\texttt{C3},
+        5.40/\texttt{C4-E1},6.37/\texttt{C4-E2},7.20/\texttt{C4-E3}}{
+        \node[tick,rotate=55,anchor=east] at (\x,.20) {\lab};
+      }
+      \draw[ours,line width=1.35pt] (.55,1.75)--(1.52,1.75)--(2.49,1.75)--
+        (3.46,1.75)--(4.43,1.75)--(5.40,1.75)--(6.37,1.75)--(7.20,1.75);
+      \draw[baseone,line,dashed] (.55,1.75)--(1.52,1.75)--(2.49,1.75)--
+        (3.46,1.75)--(4.43,1.75)--(5.40,1.75)--(6.37,1.75)--(7.20,1.75);
+      \draw[basetwo,line,dotted] (.55,1.75)--(1.52,1.75)--(2.49,1.75)--
+        (3.46,1.75)--(4.43,1.75)--(5.40,1.75)--(6.37,1.75)--(7.20,1.75);
+      \draw[basethree,line,dash dot] (.55,1.75)--(1.52,1.75)--(2.49,1.75)--
+        (3.46,1.75)--(4.43,1.75)--(5.40,1.75)--(6.37,1.75)--(7.20,1.75);
+      \foreach \x in {.55,1.52,2.49,3.46,4.43,5.40,6.37,7.20}{
+        \fill[ours] (\x,1.75) circle (.055);
+        \draw[baseone] (\x,1.75) rectangle ++(.10,.10);
+      }
+      \node[legend,anchor=west,text=ours] at (.55,2.47) {Ours};
+      \node[legend,anchor=west,text=baseone] at (1.65,2.47) {End2End Planner};
+      \node[legend,anchor=west,text=basetwo] at (4.15,2.47) {One Agent per Robot};
+      \node[legend,anchor=west,text=basethree] at (6.20,2.47) {COHERENT-Adapted};
+      \node[legend,text=figink] at (3.90,1.18) {all plotted values: \textbf{***}};
+    \end{scope}}
+
+  \metricpanel{0}{3.80}{(a) Subtask Completion Rate (SCR)}
+  \metricpanel{8.55}{3.80}{(b) Makespan}
+  \metricpanel{0}{0}{(c) Semantic Reasoning Time Ratio}
+  \metricpanel{8.55}{0}{(d) LLM Cost}
+\end{tikzpicture}

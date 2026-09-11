@@ -1,0 +1,39 @@
+\definecolor{hwink}{HTML}{20252A}
+\definecolor{hwmuted}{HTML}{6B737A}
+\definecolor{hwfill}{HTML}{F7F9FA}
+\definecolor{hwblue}{HTML}{356FA8}
+\definecolor{hworange}{HTML}{C47A36}
+\definecolor{hwred}{HTML}{B44747}
+
+\begin{tikzpicture}[
+  x=1cm,y=1cm,
+  font=\sffamily\fontsize{6.7}{7.5}\selectfont,
+  frame/.style={draw=hwink!50,fill=hwfill,rounded corners=1pt,
+                line width=.5pt},
+  rowtitle/.style={font=\sffamily\bfseries\fontsize{7.6}{8.4}\selectfont},
+  small/.style={font=\sffamily\fontsize{5.8}{6.5}\selectfont,text=hwmuted}
+]
+  \newcommand{\snapshotrow}[4]{%
+    \node[rowtitle,anchor=east,text=#4] at (.9,#1+.62) {#2};
+    \foreach \x/\t in {1.35/t1,3.85/t2,6.35/t3,8.85/t4,11.35/t5}{
+      \node[frame,text width=2.0cm,minimum height=1.05cm] at (\x,#1)
+        {\textbf{\t}\\[-1pt]\small schematic frame};
+      \draw[#4!75,line width=.65pt] (\x-.55,#1-.17)--(\x-.15,#1+.20)--
+        (\x+.23,#1-.02);
+      \draw[#4!75,line width=.65pt] (\x+.23,#1-.02)--(\x+.53,#1+.22);
+      \draw[#4!75,line width=.65pt] (\x-.55,#1-.30)--(\x+.55,#1-.30);
+    }
+    \node[small,text=hwink,anchor=west] at (13.0,#1)
+      {#3};
+  }
+  \node[rowtitle,anchor=west] at (.1,5.20) {Hardware demonstration layout};
+  \node[small,anchor=east] at (13.0,5.20)
+    {five consecutive snapshots per row};
+  \snapshotrow{4.15}{Normal execution}
+    {concurrent primitive execution and completion}{hwblue}
+  \snapshotrow{2.65}{External disturbance}
+    {disturbance occurs and affected scope is revised}{hworange}
+  \snapshotrow{1.15}{Task update}
+    {instruction update, selective semantic revision, completion}{hwred}
+  \path[use as bounding box] (0,.35) rectangle (15.6,5.45);
+\end{tikzpicture}

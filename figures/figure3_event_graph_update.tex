@@ -1,0 +1,105 @@
+\definecolor{figink}{HTML}{20252A}
+\definecolor{figmuted}{HTML}{6B737A}
+\definecolor{figblue}{HTML}{2F6DA6}
+\definecolor{figred}{HTML}{B44747}
+\definecolor{figfill}{HTML}{F7F9FA}
+\definecolor{figevent}{HTML}{F4E9EC}
+
+\begin{tikzpicture}[
+  x=1cm,y=1cm,
+  font=\sffamily\fontsize{7.4}{8.2}\selectfont,
+  >=Latex,
+  gnode/.style={circle,draw=figink!70,fill=white,line width=.55pt,
+                minimum size=.48cm,inner sep=0pt},
+  exec/.style={gnode,draw=figblue,dashed,line width=1.0pt},
+  affected/.style={gnode,draw=figred,dashed,line width=1.0pt},
+  flow/.style={-Latex,draw=figink!75,line width=.55pt},
+  label/.style={font=\sffamily\bfseries\fontsize{8}{8.8}\selectfont,
+                text=figink},
+  small/.style={font=\sffamily\fontsize{6.6}{7.4}\selectfont,
+                text=figmuted},
+  eventbox/.style={draw=figred,fill=figevent,rounded corners=2pt,
+                   line width=.7pt,minimum width=1.0cm,minimum height=.55cm,
+                   align=center,font=\sffamily\bfseries\fontsize{8}{8.8}\selectfont}
+]
+  \node[label,anchor=west] at (0,8.25)
+    {$G_{\mathrm{assign}}\rightarrow E_i\rightarrow G_{\mathrm{assign}}^{E_i}$};
+  \node[small,anchor=east] at (16.7,8.25)
+    {blue dashed: executed \quad red dashed: affected};
+
+  % Row 1: E1.
+  \node[label,anchor=east] at (0.8,6.75) {E1};
+  \node[small] at (3.0,7.62) {$G_{\mathrm{assign}}$};
+  \node[gnode] (a1) at (1.75,6.85) {$n_1$};
+  \node[exec] (a2) at (2.85,6.85) {$n_2$};
+  \node[gnode] (a3) at (3.95,6.85) {$n_3$};
+  \node[gnode] (a4) at (2.85,5.75) {$n_4$};
+  \node[gnode] (a5) at (3.95,5.75) {$n_5$};
+  \draw[flow] (a1)--(a2)--(a3);
+  \draw[flow] (a2)--(a4)--(a5);
+  \draw[flow] (a3)--(a5);
+  \node[eventbox] (e1) at (7.05,6.3) {E1};
+  \draw[flow] (a3.east) -- (e1.west);
+  \node[small] at (11.05,7.62) {$G_{\mathrm{assign}}^{E1}$};
+  \node[gnode] (b1) at (9.8,6.85) {$n_1$};
+  \node[exec] (b2) at (10.9,6.85) {$n_2$};
+  \node[affected] (b3) at (12.0,6.85) {$n_3$};
+  \node[gnode] (b4) at (10.9,5.75) {$n_4$};
+  \node[affected] (b5) at (12.0,5.75) {$n_5$};
+  \draw[flow] (b1)--(b2)--(b3);
+  \draw[flow] (b2)--(b4)--(b5);
+  \draw[flow] (b3)--(b5);
+  \draw[flow] (e1.east) -- (b3.west);
+
+  % Row 2: E2.
+  \node[label,anchor=east] at (0.8,4.25) {E2};
+  \node[small] at (3.0,5.12) {$G_{\mathrm{assign}}$};
+  \node[gnode] (c1) at (1.75,4.35) {$n_1$};
+  \node[exec] (c2) at (2.85,4.35) {$n_2$};
+  \node[gnode] (c3) at (3.95,4.35) {$n_3$};
+  \node[gnode] (c4) at (2.85,3.25) {$n_4$};
+  \node[gnode] (c5) at (3.95,3.25) {$n_5$};
+  \draw[flow] (c1)--(c2)--(c3);
+  \draw[flow] (c2)--(c4)--(c5);
+  \draw[flow] (c3)--(c5);
+  \node[eventbox] (e2) at (7.05,3.8) {E2};
+  \draw[flow] (c2.east) -- (e2.west);
+  \node[small] at (11.05,5.12) {$G_{\mathrm{assign}}^{E2}$};
+  \node[gnode] (d1) at (9.8,4.35) {$n_1$};
+  \node[affected] (d2) at (10.9,4.35) {$n_2$};
+  \node[gnode] (d3) at (12.0,4.35) {$n_3$};
+  \node[affected] (d4) at (10.9,3.25) {$n_4$};
+  \node[gnode] (d5) at (12.0,3.25) {$n_5$};
+  \draw[flow] (d1)--(d2)--(d3);
+  \draw[flow] (d2)--(d4)--(d5);
+  \draw[flow] (d3)--(d5);
+  \draw[flow] (e2.east) -- (d2.west);
+
+  % Row 3: E3.
+  \node[label,anchor=east] at (0.8,1.75) {E3};
+  \node[small] at (3.0,2.62) {$G_{\mathrm{assign}}$};
+  \node[gnode] (f1) at (1.75,1.85) {$n_1$};
+  \node[exec] (f2) at (2.85,1.85) {$n_2$};
+  \node[gnode] (f3) at (3.95,1.85) {$n_3$};
+  \node[gnode] (f4) at (2.85,.75) {$n_4$};
+  \node[gnode] (f5) at (3.95,.75) {$n_5$};
+  \draw[flow] (f1)--(f2)--(f3);
+  \draw[flow] (f2)--(f4)--(f5);
+  \draw[flow] (f3)--(f5);
+  \node[eventbox] (e3) at (7.05,1.3) {E3};
+  \draw[flow] (f4.east) -- (e3.west);
+  \node[small] at (11.05,2.62) {$G_{\mathrm{assign}}^{E3}$};
+  \node[gnode] (h1) at (9.8,1.85) {$n_1$};
+  \node[exec] (h2) at (10.9,1.85) {$n_2$};
+  \node[gnode] (h3) at (12.0,1.85) {$n_3$};
+  \node[affected] (h4) at (10.9,.75) {$n_4$};
+  \node[affected] (h5) at (12.0,.75) {$n_5$};
+  \draw[flow] (h1)--(h2)--(h3);
+  \draw[flow] (h2)--(h4)--(h5);
+  \draw[flow] (h3)--(h5);
+  \draw[flow] (e3.east) -- (h4.west);
+
+  \draw[draw=figink!18,line width=.45pt] (0.95,4.95)--(16.65,4.95);
+  \draw[draw=figink!18,line width=.45pt] (0.95,2.45)--(16.65,2.45);
+  \path[use as bounding box] (0.45,0.25) rectangle (16.85,8.55);
+\end{tikzpicture}
