@@ -1,0 +1,16 @@
+\newcommand{\failurePanel}[3]{%
+  \begin{minipage}[t]{.485\columnwidth}
+    \centering
+    \includegraphics[width=\linewidth]{#1}
+    \vspace{0.10em}
+    {\scriptsize\textbf{(#2) #3}\par}
+  \end{minipage}}
+
+\failurePanel{figures/figure6/a.pdf}{a}{Invalid capability}
+\hfill
+\failurePanel{figures/figure6/b.pdf}{b}{Execution anomaly}
+\vspace{0.35em}
+
+\failurePanel{figures/figure6/c.pdf}{c}{Assignment conflict}
+\hfill
+\failurePanel{figures/figure6/d.pdf}{d}{Task timeout}

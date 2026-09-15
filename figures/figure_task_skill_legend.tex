@@ -1,0 +1,13 @@
+\begin{tikzpicture}[font=\rmfamily\fontsize{8}{8.8}\selectfont]
+  \definecolor{gpick}{HTML}{5AAA78}
+  \definecolor{gmove}{HTML}{8A86C8}
+  \definecolor{grotate}{HTML}{C5A45A}
+  \definecolor{gplace}{HTML}{E09657}
+  \definecolor{grelease}{HTML}{B35D68}
+  \foreach \x/\c/\t in {0/gpick/pick,1.05/gmove/move,2.28/grotate/rotate,
+                          3.68/gplace/place,4.82/grelease/release}{
+    \fill[\c] (\x,0) rectangle +(0.18,0.10);
+    \node[anchor=west] at (\x+0.24,0.05) {\t};
+  }
+  \path[use as bounding box] (0,-0.08) rectangle (6.15,0.18);
+\end{tikzpicture}

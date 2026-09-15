@@ -1,0 +1,42 @@
+\begin{figure}[!t]
+  \centering
+  \subfloat[SCR]{%
+    \includegraphics[width=.485\columnwidth]{figures/generated/figure5_a_scr.pdf}}
+  \hfill
+  \subfloat[Semantic reasoning time ratio]{%
+    \includegraphics[width=.485\columnwidth]{figures/generated/figure5_b_reasoning_time.pdf}}
+  \\[-1pt]
+  \subfloat[Token usage]{%
+    \includegraphics[width=.485\columnwidth]{figures/generated/figure5_c_token_usage.pdf}}
+  \hfill
+  \subfloat[Makespan]{%
+    \includegraphics[width=.485\columnwidth]{figures/generated/figure5_d_makespan.pdf}}
+  \\[-1pt]
+  \begin{tikzpicture}[
+    x=1cm,y=1cm,
+    font=\rmfamily\fontsize{8}{8.8}\selectfont,
+    legendline/.style={line width=.75pt}
+  ]
+    \definecolor{fours}{HTML}{2D5F8A}
+    \definecolor{fend}{HTML}{A66A3F}
+    \definecolor{fone}{HTML}{5A8F78}
+    \definecolor{fcoh}{HTML}{8270A6}
+    \draw[fours,legendline] (0,0)--(.32,0);
+    \fill[fours] (.16,0) circle[radius=.035];
+    \node[anchor=west] at (.40,0) {Ours};
+    \draw[fend,legendline,dashed] (2.85,0)--(3.17,0);
+    \draw[fend,line width=.45pt] (2.99,-.035) rectangle (3.05,.035);
+    \node[anchor=west] at (3.25,0) {End2End};
+    \draw[fone,legendline,dotted] (0,-.27)--(.32,-.27);
+    \draw[fone,fill=white,line width=.45pt] (.16,-.225)--(.21,-.305)--(.11,-.305)--cycle;
+    \node[anchor=west] at (.40,-.27) {Agent per Robot};
+    \draw[fcoh,legendline,dash dot] (2.85,-.27)--(3.17,-.27);
+    \draw[fcoh,fill=white,line width=.45pt]
+      (3.01,-.225)--(3.06,-.27)--(3.01,-.315)--(2.96,-.27)--cycle;
+    \node[anchor=west] at (3.25,-.27) {COHERENT};
+    \path[use as bounding box] (-.05,-.38) rectangle (5.95,.12);
+  \end{tikzpicture}
+  \caption{Secondary event-handling metrics: (a) SCR, (b) semantic reasoning
+  time ratio, (c) token usage, and (d) successful-trial makespan.}
+  \label{fig:baseline_secondary}
+\end{figure}

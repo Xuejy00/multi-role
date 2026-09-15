@@ -1,0 +1,19 @@
+\newcommand{\figsevenframe}[1]{%
+  \includegraphics[width=.188\textwidth]{figures/figure8/#1.jpg}}
+
+\setlength{\tabcolsep}{1.1pt}
+\renewcommand{\arraystretch}{0.92}
+\begin{tabular}{@{}l@{\hspace{.35em}}ccccc@{}}
+  \multicolumn{6}{@{}l}{\footnotesize\textbf{(a)} \texttt{H1} Normal cooperative execution}
+  \\[-1pt]
+  & \figsevenframe{a-1} & \figsevenframe{a-2} & \figsevenframe{a-3}
+  & \figsevenframe{a-4} & \figsevenframe{a-5} \\
+  \multicolumn{6}{@{}l}{\footnotesize\textbf{(b)} \texttt{H2} Task update adaptation}
+  \\[-1pt]
+  & \figsevenframe{c-1} & \figsevenframe{c-2} & \figsevenframe{c-3}
+  & \figsevenframe{c-4} & \figsevenframe{c-5} \\
+  \multicolumn{6}{@{}l}{\footnotesize\textbf{(c)} \texttt{H3} External disturbance recovery}
+  \\[-1pt]
+  & \figsevenframe{b-1} & \figsevenframe{b-2} & \figsevenframe{b-3}
+  & \figsevenframe{b-4} & \figsevenframe{b-5} \\
+\end{tabular}

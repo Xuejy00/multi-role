@@ -1,0 +1,72 @@
+\definecolor{figink}{HTML}{20252A}
+\definecolor{figmuted}{HTML}{6B737A}
+\definecolor{figpurple}{HTML}{8E5BBE}
+\definecolor{figgreen}{HTML}{4D8B55}
+\definecolor{figblue}{HTML}{2F6DA6}
+\definecolor{figline}{HTML}{D9DDE3}
+
+% Fill one IEEE/ICRA column exactly.  The explicit reset of the TikZ
+% bounding box removes the residual left margin introduced by node extents.
+\resizebox{\columnwidth}{!}{%
+\begin{tikzpicture}[x=1cm,y=1cm,>=Latex]
+  \tikzset{
+    head/.style={font=\sffamily\bfseries\fontsize{8}{8.8}\selectfont,text=figink},
+    subtitle/.style={font=\sffamily\fontsize{8}{8.8}\selectfont,text=figink,align=center},
+    eventlabel/.style={font=\sffamily\bfseries\fontsize{8}{8.8}\selectfont,
+                       text=figink},
+    flow/.style={-Latex,draw=figink!70,line width=.42pt},
+    graphpdf/.style={inner sep=0pt,outer sep=0pt}
+  }
+
+  % Six graph PDFs are stored under figures/figure3/.
+  \def\figpath{figures/figure3}
+
+  % ------------------------------------------------------------
+  % Column headers
+  % ------------------------------------------------------------
+  \node[head] at (1.85,6.82) {$G$};
+  \node[head] at (6.94,6.82) {$G'$};
+
+  % ------------------------------------------------------------
+  % E1: Task update
+  % ------------------------------------------------------------
+  \node[graphpdf] at (1.85,5.58)
+    {\includegraphics[width=3.70cm]{\figpath/figure3_E1_Gassign_before.pdf}};
+  \draw[flow] (3.73,5.58) -- node[eventlabel,above=2pt] {$e^{\texttt{t}}$} (5.00,5.58);
+  \node[graphpdf] at (6.94,5.58)
+    {\includegraphics[width=3.84cm]{\figpath/figure3_E1_Gassign_after.pdf}};
+  \node[subtitle,text width=8.56cm] at (4.43,4.50)
+    {\textbf{Task update:} the user wants crisps instead of biscuit after $n_4$ is executed.};
+
+  \draw[figline,line width=.35pt] (0.00,4.15) -- (8.86,4.15);
+
+  % ------------------------------------------------------------
+  % E2: External disturbance
+  % ------------------------------------------------------------
+  \node[graphpdf] at (1.85,3.19)
+    {\includegraphics[width=3.70cm]{\figpath/figure3_E2_Gassign_before.pdf}};
+  \draw[flow] (3.73,3.19) -- node[eventlabel,above=2pt] {$e^{\texttt{x}}$} (5.00,3.19);
+  \node[graphpdf] at (6.94,3.19)
+    {\includegraphics[width=3.84cm]{\figpath/figure3_E2_Gassign_after.pdf}};
+  \node[subtitle,text width=8.56cm] at (4.43,2.06)
+    {\textbf{External disturbance:} the biscuit is manually taken and placed downstream on the conveyor while $n_5$ is being executed.};
+
+  \draw[figline,line width=.35pt] (0.00,1.72) -- (8.86,1.72);
+
+  % ------------------------------------------------------------
+  % E3: Execution failure
+  % ------------------------------------------------------------
+  \node[graphpdf] at (1.86,0.67)
+    {\includegraphics[width=3.72cm]{\figpath/figure3_E3_Gassign_before.pdf}};
+  \draw[flow] (3.75,0.67) -- node[eventlabel,above=2pt] {$e^{\texttt{f}}$} (4.98,0.67);
+  \node[graphpdf] at (6.93,0.67)
+    {\includegraphics[width=3.86cm]{\figpath/figure3_E3_Gassign_after.pdf}};
+  \node[subtitle,text width=8.60cm] at (4.43,-0.63)
+    {\textbf{Execution failure:} $n_1$ fails because the conveyor moves too fast and the Franka misses the grasp; the downstream suction arm prepares in advance for the pick.};
+
+  % Reset the natural node-based bounding box, then define an exact full-column box.
+  % This removes the visible blank strip on the left when the input is centered.
+  \pgfresetboundingbox
+  \path[use as bounding box] (0.00,-0.90) rectangle (8.86,7.02);
+\end{tikzpicture}%
+}

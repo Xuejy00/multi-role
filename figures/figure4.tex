@@ -1,0 +1,35 @@
+\begin{figure}[t]
+  \centering
+  \setlength{\tabcolsep}{3pt}
+  % Equal-height cells align both columns while preserving each PDF aspect ratio.
+  \newcommand{\ganttpanel}[1]{%
+    \parbox[c][1.08in][c]{.485\columnwidth}{\centering
+      \includegraphics[width=.485\columnwidth]{#1}}}
+  % The trajectory PDFs are shorter than their paired Gantt charts; lower
+  % them slightly so the three row pairs share a common lower edge.
+  \newcommand{\ganttpanelleft}[1]{%
+    \parbox[c][1.08in][c]{.485\columnwidth}{\centering
+      \raisebox{+0.15in}{\includegraphics[width=.485\columnwidth]{#1}}}}
+  \begin{tabular}{@{}cc@{}}
+    \ganttpanelleft{figures/figure_gantt/a1.pdf} &
+    \ganttpanel{figures/figure_gantt/a2.pdf} \\
+    \noalign{\vspace{2pt}}
+    \ganttpanelleft{figures/figure_gantt/b1.pdf} &
+    \ganttpanel{figures/figure_gantt/b2.pdf} \\
+    \noalign{\vspace{2pt}}
+    \ganttpanelleft{figures/figure_gantt/c1.pdf} &
+    \ganttpanel{figures/figure_gantt/c2.pdf}
+  \end{tabular}
+
+  \vspace{-5pt}
+  \input{figures/figure_task_skill_legend.tex}
+
+  \caption{Paired trajectories and execution timelines expose the localized
+  response to each semantic event. (a) Task Update: the request changes to replace Mirinda with
+  cola. (b) External Disturbance: the cola is moved to the other end of the
+  conveyor during grasping. (c) Execution Failure: the conveyor moves too fast
+  and both Franka manipulators fail their picks in succession. In each row,
+  the left panel is the manipulator trajectory and the right panel is the
+  corresponding Gantt chart.}
+  \label{fig:gantt}
+\end{figure}
