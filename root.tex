@@ -1,19 +1,35 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[letterpaper,10pt,conference]{ieeeconf}
 
+\IEEEoverridecommandlockouts
+\overrideIEEEmargins
+
+% In case the PDF conversion filter reports corruption/parsing errors,
+% uncomment one of the following lines if needed.
+% \pdfobjcompresslevel=0
+% \pdfminorversion=4
+
+% Packages required by the current paper.
 \usepackage[T1]{fontenc}
 \usepackage{times}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{float}
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{siunitx}
+\usepackage{placeins}
+\usepackage{stfloats}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage[numbers]{natbib}
+\setlength{\textfloatsep}{6pt plus 1pt minus 2pt}
+\setlength{\floatsep}{5pt plus 1pt minus 1pt}
+\setlength{\intextsep}{6pt plus 1pt minus 2pt}
+\setlength{\dbltextfloatsep}{6pt plus 1pt minus 2pt}
+\setlength{\dblfloatsep}{5pt plus 1pt minus 1pt}
+\usepackage[ruled,vlined,linesnumbered,noend]{algorithm2e}
 \usepackage[bookmarks=true,hidelinks]{hyperref}
 
 \newif\ifanonymous
@@ -21,7 +37,7 @@
 % INTERNAL WRITING / OVERLEAF REVIEW:
 % \anonymousfalse
 %
-% RSS DOUBLE-BLIND SUBMISSION:
+% DOUBLE-blind SUBMISSION:
 % \anonymoustrue
 
 % Current internal default:
@@ -29,48 +45,30 @@
 
 \input{paper_metadata.tex}
 
-\title{\papertitle}
+\title{\textbf{\papertitle}}
+\author{}
 
-\ifanonymous
-  \author{Author Names Omitted for Anonymous Review}
-  \hypersetup{
-    pdftitle={\papertitle},
-    pdfauthor={Anonymous Authors}
-  }
-\else
-  \author{%
-    \IEEEauthorblockN{\paperauthornames}
-    \IEEEauthorblockA{\paperaffiliation\\
-    Contact: \texttt{\papercontact}}}
-  \hypersetup{
-    pdftitle={\papertitle},
-    pdfauthor={\paperauthornames}
-  }
-\fi
+\hypersetup{
+  pdftitle={\papertitle},
+  pdfauthor={}
+}
 
 \begin{document}
 
 \maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
 
-% Activate only after a real abstract exists.
-% \input{sections/abstract.tex}
-
-\IEEEpeerreviewmaketitle
-
+\input{sections/abstract.tex}
 \input{sections/introduction.tex}
-% II. Problem Formulation
 \input{sections/problem_formulation.tex}
-% III. Proposed Solution: role ownership and multi-timescale coordination.
 \input{sections/role_shared_coordination.tex}
 \input{sections/semantic_physical_coordination.tex}
-% IV. Experiments
 \input{sections/experiments.tex}
-% Optional limitations section.
 % \input{sections/limitations.tex}
-% V. Conclusion
 \input{sections/conclusion.tex}
 
-\bibliographystyle{plainnat}
+\bibliographystyle{IEEEtran}
 \bibliography{references}
 
 \end{document}

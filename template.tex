@@ -1,0 +1,111 @@
+\documentclass[letterpaper, 10pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+%In case you encounter the following error:
+%Error 1010 The PDF file may be corrupt (unable to open PDF file) OR
+%Error 1000 An error occurred while parsing a contents stream. Unable to analyze the PDF file.
+%This is a known problem with pdfLaTeX conversion filter. The file cannot be opened with acrobat reader
+%Please use one of the alternatives below to circumvent this error by uncommenting one or the other
+%\pdfobjcompresslevel=0
+%\pdfminorversion=4
+
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+% numbers option provides compact numerical references in the text.
+% \usepackage{natbib}
+\let\proof\relax
+\let\endproof\relax
+\usepackage{amsthm}
+\usepackage{times}
+\usepackage{multicol}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{standalone}
+\usepackage{booktabs}
+\usepackage[ruled,vlined,linesnumbered,noend]{algorithm2e}
+\usepackage{mdframed}
+\usepackage{fancyvrb,multirow}
+\usepackage{soul}
+\usepackage{dsfont,mathabx}
+\usepackage{array, booktabs}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{threeparttable}
+
+%%============================
+%%============================
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{example}{Example}
+\newtheorem{problem}{Problem}
+
+% GENERAL
+\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+\newcommand{\improve}[1]{\textcolor{cyan}{#1}}
+\newcommand{\note}[1]{\textcolor{blue}{NOTE: #1}}
+\newcommand{\question}[1]{\textcolor{orange}{Q: #1}}
+\newcommand{\wnote}[1]{\textcolor{teal}{W: #1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%
+
+
+\title{\textbf{BodyGuards: Escorting by Multiple Robots in Unknown Environment\\
+under Limited Communication}}
+
+
+\author{Zhuoli Tian, Yanze Bao and Meng Guo$^*$% <-this % stops a space
+  \thanks{$^*$This work was supported by the National Natural Science Foundation of China
+    (NSFC) under grants U2241214, T2121002. Corresponding author:
+    Meng Guo, meng.guo@pku.edu.cn.}% <-this % stops a space
+  }
+
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%========================================
+
+
+%%========================================
+\input{contents/abstract.tex}
+%%========================================
+\input{contents/introduction.tex}
+%%========================================
+\input{contents/problem.tex}
+%%========================================
+\input{contents/solution.tex}
+%%========================================
+\input{contents/experiment.tex}
+%%========================================
+\input{contents/conclusion.tex}
+%%========================================
+
+% \newpage
+%========================================
+\bibliographystyle{IEEEtran}
+\bibliography{contents/references}
+
+
+
+\end{document}
