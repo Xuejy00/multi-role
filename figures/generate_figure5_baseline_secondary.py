@@ -287,7 +287,7 @@ def plot_average_bar(
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.tick_params(axis="both", width=0.45, length=2.0, pad=1.2)
-    ax.tick_params(axis="x", labelsize=8.0)
+    ax.tick_params(axis="x", labelsize=6.5)
     fig.savefig(OUT_DIR / out_name, bbox_inches="tight", pad_inches=0.012)
     plt.close(fig)
 

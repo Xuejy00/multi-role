@@ -42,8 +42,8 @@ FAILURE_LABELS = [
 FAILURE_COLORS = ["#4C78A8", "#72B7B2", "#E0A458", "#B279A2"]
 METHOD_LABELS = {
     "ours": "Ours",
-    "a1": "w/o Role\nSeparation",
-    "a2": "w/o Selective\nReplanning",
+    "a1": "A1",
+    "a2": "A2",
 }
 METHOD_ORDER = ["ours", "a1", "a2"]
 
@@ -127,15 +127,15 @@ def draw_matrix_bar_chart(counts: dict[str, list[int]]) -> None:
         "pdf.fonttype": 42,
         "ps.fonttype": 42,
     })
-    figure, axis = plt.subplots(figsize=(3.42, 1.52))
+    figure, axis = plt.subplots(figsize=(3.42, 0.98))
     axis.set_xlim(0, 1)
     axis.set_ylim(0, 1)
     axis.axis("off")
 
-    left = 0.235
-    right = 0.985
-    top = 0.760
-    bottom = 0.105
+    left = 0.105
+    right = 0.995
+    top = 0.700
+    bottom = 0.070
     cols = len(FAILURE_COLUMNS)
     rows = len(METHOD_ORDER)
     cell_w = (right - left) / cols
@@ -146,18 +146,18 @@ def draw_matrix_bar_chart(counts: dict[str, list[int]]) -> None:
         cx = left + (col + 0.5) * cell_w
         axis.text(
             cx,
-            0.905,
+            0.865,
             label,
             ha="center",
             va="center",
-            fontsize=7.4,
+            fontsize=7.2,
             fontweight="bold",
             color="#20252A",
         )
         axis.add_patch(Rectangle(
-            (left + col * cell_w, top + 0.012),
+            (left + col * cell_w, top + 0.010),
             cell_w,
-            0.010,
+            0.012,
             facecolor=color,
             edgecolor="none",
             alpha=0.95,
@@ -167,12 +167,12 @@ def draw_matrix_bar_chart(counts: dict[str, list[int]]) -> None:
         y0 = top - (row + 1) * cell_h
         cy = y0 + 0.5 * cell_h
         axis.text(
-            0.020,
+            0.012,
             cy,
             METHOD_LABELS[method],
             ha="left",
             va="center",
-            fontsize=8.0,
+            fontsize=7.8,
             fontweight="bold" if method == "ours" else "normal",
             color="#20252A",
         )
@@ -180,17 +180,17 @@ def draw_matrix_bar_chart(counts: dict[str, list[int]]) -> None:
             x0 = left + col * cell_w
             value = counts[method][col]
             axis.add_patch(Rectangle(
-                (x0 + 0.006, y0 + 0.020),
-                cell_w - 0.012,
-                cell_h - 0.040,
+                (x0 + 0.005, y0 + 0.012),
+                cell_w - 0.010,
+                cell_h - 0.024,
                 facecolor="#FBFCFD",
                 edgecolor="#D6DCE2",
                 linewidth=0.35,
             ))
-            bar_max = cell_w - 0.060
+            bar_max = cell_w - 0.052
             bar_w = max(bar_max * value / max_count, bar_max * 0.030)
-            bar_h = cell_h * 0.230
-            bar_x = x0 + 0.022
+            bar_h = cell_h * 0.250
+            bar_x = x0 + 0.018
             bar_y = cy - bar_h / 2
             axis.add_patch(Rectangle(
                 (bar_x, bar_y),
@@ -200,18 +200,18 @@ def draw_matrix_bar_chart(counts: dict[str, list[int]]) -> None:
                 edgecolor="none",
                 alpha=0.94 if value else 0.60,
             ))
-            label_x = min(bar_x + bar_w + 0.012, x0 + cell_w - 0.018)
+            label_x = min(bar_x + bar_w + 0.010, x0 + cell_w - 0.015)
             axis.text(
                 label_x,
                 cy,
                 str(value),
                 ha="left",
                 va="center",
-                fontsize=8.0,
+                fontsize=7.6,
                 color="#20252A",
             )
 
-    axis.plot([left, right], [top + 0.022, top + 0.022],
+    axis.plot([left, right], [top + 0.024, top + 0.024],
               color="#20252A", linewidth=0.45)
     axis.plot([left, right], [bottom, bottom], color="#20252A", linewidth=0.45)
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
