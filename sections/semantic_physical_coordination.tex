@@ -34,23 +34,14 @@ assignment-aware primitive nodes:
 \end{equation}
 where $\mathcal{N}_k^{\texttt{aff}}\subseteq\mathcal{N}$
 contains the nodes whose task meaning, feasibility, execution status, or
-dependencies require reconsideration. The operator
-$\rho_V^{\texttt{aff}}$ receives the detected event $e_k$, the latest
-event-consistent instruction $\gamma$, assignment-aware graph $G$, refreshed
-scene and feasibility facts $\mathcal{F}$, and verified status $z$. Verification
-first applies the criterion associated with the event type. For a task update
-$e^{\texttt{t}}$, it selects nodes whose stored task requirements are no longer
-consistent with the revised $\gamma$. For an external disturbance
-$e^{\texttt{x}}$, it compares each node's stored target, feasibility, and
-dependency assumptions with the refreshed $\mathcal{F}$ and selects nodes whose
-assumptions no longer hold. For an execution failure $e^{\texttt{f}}$, it
-selects the primitive nodes marked $\texttt{FAILED}$ in $z$. Starting from these
-directly affected nodes, verification follows their outgoing dependencies in
-$G$ and adds every unfinished descendant whose validity or executability depends
-on a selected node. A node is excluded from $\mathcal{N}_k^{\texttt{aff}}$ when
-it satisfies neither the event-specific criterion nor this unfinished
-dependency condition. Thus, independent valid nodes remain outside the affected
-scope returned by~\eqref{eq:affected_subtasks}.
+dependencies require reconsideration. The operator tests $e_k$ against the
+current $\gamma$, $G$, refreshed $\mathcal{F}$, and verified $z$. Its
+event-specific inconsistency checks select requirements invalidated by a task
+update, scene-dependent assumptions invalidated by a disturbance, or nodes
+marked $\texttt{FAILED}$ after execution. Verification then traces outgoing
+dependencies in $G$ to include unfinished descendants whose validity or
+executability depends on those nodes, while independent valid nodes remain
+outside $\mathcal{N}_k^{\texttt{aff}}$ and are preserved.
 
 \subsubsection{Update the Semantic State}
 \label{sec:update_affected_state}

@@ -3,11 +3,12 @@
 \providecommand{\finalchange}[1]{#1}
 \providecommand{\localexecchange}[1]{#1}
 
-Language-guided systems connect instructions to actions through feedback and
-scene grounding~\cite{huang2023inner,liang2023code,rana2023sayplan,
-huang2023voxposer}. RoCo uses per-robot dialogue, COHERENT central proposals and
-feedback, MALLVI specialist reactivation, and CoMuRoS and DEXTER-LLM event-based
-task or assignment updates~\cite{mandi2024roco,liu2025coherent,taji2026mallvi,
+Language-guided grounding~\cite{huang2023inner,liang2023code,rana2023sayplan,
+huang2023voxposer} supports several LLM-based multi-robot coordination patterns:
+RoCo uses per-robot dialogue; COHERENT, centralized proposals and feedback;
+MALLVI, specialist reactivation; and CoMuRoS and DEXTER-LLM, event-based task or
+assignment updates~\cite{
+mandi2024roco,liu2025coherent,taji2026mallvi,
 borate2026comuros,zhu2025dexter}. Other systems use capability coalitions,
 dependency-based allocation, or planning, manipulation, and verification
 agents~\cite{kannan2024smartllm,obata2025lipllm,he2026closedloop}. For
@@ -18,8 +19,8 @@ and $z$ to the affordance, planning, and verification roles, and selectively
 reconstructs affected subgraphs while retaining valid execution.
 
 Dynamic manipulation supports tracked or reactive grasping and visual
-servoing~\cite{marturi2019dynamic,morrison2018closing,maranci2026reactive,
-liu2023target,cuevas2018hybrid,haviland2020finalphase}, while execution
+servoing~\cite{marturi2019dynamic,maranci2026reactive,liu2023target,
+haviland2020finalphase}, while execution
 monitoring and continual replanning address runtime deviations~\cite{
 pettersson2005execution,brenner2009continual,levihn2013foresight,
 pezzato2023active}. These methods support physical execution and recovery;
