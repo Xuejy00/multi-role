@@ -6,66 +6,72 @@
 \providecommand{\localexecchange}[1]{#1}
 
 Heterogeneous multi-manipulator systems combine complementary workspaces,
-end-effectors, sensing, and payload capabilities.  Open-language manipulation
-tasks further require these embodiments to act concurrently while targets move,
-the scene changes, or execution fails.  Physical state therefore evolves
-continuously, whereas task-relevant semantic changes occur at discrete event
-boundaries.  A direct vision-and-language to action mapping does not expose the
-capability constraints, task dependencies, or responsibility interfaces needed
-to coordinate this combination.
-
-Large language and vision-language models provide semantic tools for interpreting
-instructions, grounding objects and skills, and revising task state from
-feedback~\cite{huang2023inner,liang2023code,rana2023sayplan}.  Their use in a
-heterogeneous team still requires one consistent semantic representation that
-can be read by multiple reasoning roles while local perception and control
-continue at a higher rate.  Independent semantic decisions can otherwise assign
-incompatible actions or obscure which information changed.  This motivates the
-following question: how can semantic reasoning be organized so that a team
-maintains shared task meaning, adapts only when a task-relevant event occurs, and
-continues valid physical execution between events?
-
-Figure~\ref{fig:scenario} grounds this question in the heterogeneous conveyor
-workspace.  The physical scene illustrates the coexistence of complementary
-manipulators, moving targets, visual observations, task updates, disturbances,
-and execution failures.
+end-effectors, and sensing, but must keep one task interpretation consistent
+while different robots execute concurrently in a changing workspace.
+Figure~\ref{fig:scenario} grounds this problem in a conveyor setting with
+complementary manipulators and three task-relevant semantic events. Language
+and vision-language models can interpret instructions and ground
+objects and skills from feedback~\cite{huang2023inner,liang2023code,
+rana2023sayplan}. However, direct vision-language-to-action mappings do not
+expose team capability constraints or responsibility interfaces, and
+independent agents can maintain incompatible task views. The challenge is to
+establish one capability-aware semantic authority across robots and revise only
+the semantics invalidated by a new instruction, disturbance, or verified
+failure while local controllers remain responsive to continuous scene
+evolution. We propose RoSC, a role-shared semantic coordination framework with
+an event-driven selective update that follows event detection $\rightarrow$
+affected-scope selection $\rightarrow$ semantic-state revision $\rightarrow$
+continued dispatch from a consistent frontier. Simulation baselines, failure
+analysis, and mechanism ablations test these mechanisms, while hardware trials
+check the same update sequence during physical execution.
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\columnwidth]{figures/figure1_final.pdf}
-    \caption{Scenario teaser for heterogeneous multi-manipulator coordination.
-    A task instruction and visual observations enter three semantic Roles that
-    maintain shared task and scene understanding, construct primitive commands,
-    and receive execution evidence.  The conveyor illustrates continuous
-    physical evolution; the scene is physical grounding rather than an
-    experimental result.}
+    \includegraphics[width=\columnwidth]{figures/figure1_final_lowercase.pdf}
+    \caption{The shared semantic state coordinates three roles while preserving
+    local execution. Top: framework and simulated conveyor workspace; middle:
+    event Gantt charts; bottom: hardware workspace.}
     \label{fig:scenario}
 \end{figure}
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{figures/figure2.pdf}
+  \caption{Role-shared coordination links semantic decisions to physical
+  execution. Affordance evaluates scene feasibility; planning decomposes and
+  assigns subtasks, skills, and dependencies; verification abstracts execution
+  evidence, checks outcomes and events, and identifies affected subtasks. Solid
+  and dashed arrows denote online execution and selective event updates.}
+  \label{fig:method_overview}
+\end{figure*}
 
 \input{sections/related_work.tex}
 
 \subsection{Our Method}
+\label{sec:our_method_intro}
 
-The proposed method maintains one role-shared semantic representation for the
-current task, the assignment-aware primitive graph, scene feasibility, and
-execution status.  Planning first constructs an abstract semantic task graph
-and then materializes assignment-aware primitive nodes; Affordance and
-Verification Roles provide the scene information and execution evidence used
-by this process.  Task updates, external disturbances, and execution failures
-trigger selective reconsideration, while valid physical execution continues
-whenever the affected scope does not invalidate it.  The resulting executable
-commands are issued concurrently to compatible manipulators and executed by
-their local skills.
+Figure~\ref{fig:method_overview} shows the resulting framework. At task start,
+the affordance role evaluates object regions, reachability, obstructions, and
+scene changes to produce $\mathcal{F}$; the planning role decomposes the task,
+matches skills and capabilities to manipulators, constructs $G$, and initializes
+the versioned shared semantic state
+$S_\nu^{\texttt{sem}}=(\gamma,G,\mathcal{F},z)$. The framework then selects the
+verified executable frontier, constructs capability-valid commands, and
+dispatches independent commands concurrently to the assigned manipulators.
+After local execution, affordance refreshes $\mathcal{F}$ and verification
+abstracts the evidence, checks the outcome, updates $z$, and detects events. For
+an event, verification identifies $\mathcal{N}_k^{\texttt{aff}}$; planning
+replans that subgraph while preserving valid work outside it, then dispatch
+continues from the updated frontier. This restricted semantic update shortens
+the response path and helps preserve opportunities as the scene evolves.
 
-The paper makes two contributions:
-\begin{itemize}
-    \item \textbf{Role-Shared Semantic Representation.}  A single semantic
-    representation gives Affordance, Planning, and Verification Roles explicit
-    information responsibilities for task decomposition, capability-aware
-    assignment, and execution-effect assessment.
-
-    \item \textbf{Selective Event-Scoped Reconsideration.}  Task updates,
-    external disturbances, and execution failures identify a bounded scope for
-    semantic revision, while compatible unaffected execution continues through
-    manipulator-local skills between event boundaries.
-\end{itemize}
+The main contribution of this work is twofold: (I) A role-shared semantic
+coordination formulation is introduced for dynamic heterogeneous
+multi-manipulator scenarios with continual physical changes, assigning explicit
+responsibility to the affordance, planning, and verification roles; and (II) An
+event-driven selective semantic update procedure is developed to efficiently
+handle task updates, external disturbances, and execution failures while
+preserving unaffected valid execution. Contribution I is validated through
+role ablation, semantic-state and role-interaction analysis, and hardware
+execution; Contribution II through event experiments, affected-scope analysis,
+and selective-update evaluation.

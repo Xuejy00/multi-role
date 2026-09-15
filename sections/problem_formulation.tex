@@ -12,39 +12,42 @@ Consider a team of heterogeneous robotic manipulators
  \mathcal{R}\triangleq\{r_i\}_{i=1}^{N},
  \label{eq:manipulator_team}
 \end{equation}
-where $N$ is the number of manipulators and $r_i$ has capability set
-$\mathcal{C}_i$.  A capability set describes the primitive actions, targets,
-and embodiment conditions available to the corresponding manipulator.  The
+where the team in~\eqref{eq:manipulator_team} contains $N$ manipulators and
+$r_i$ has capability set
+$\mathcal{C}_i$. A capability set describes the primitive actions, targets,
+and embodiment conditions available to the corresponding manipulator. The
 system receives a natural-language task $\gamma$ and continuous visual
 observations $o(t)$ while the physical workspace evolves.
 
 The execution process can also produce discrete semantic events
 \begin{equation}
  e_k\in\mathcal{E}\triangleq
- \{e^{\texttt{task}},e^{\texttt{ext}},e^{\texttt{fail}}\},
+ \{e^{\texttt{t}},e^{\texttt{x}},e^{\texttt{f}}\},
  \label{eq:semantic_events}
 \end{equation}
-where $e^{\texttt{task}}$ denotes an online task update,
-$e^{\texttt{ext}}$ denotes an external disturbance, and
-$e^{\texttt{fail}}$ denotes an execution failure.  Continuous physical motion,
-including motion of a target on a conveyor, remains part of the evolving
-workspace and is not itself a semantic event.
+where $e^{\texttt{t}}$ denotes an online task update, $e^{\texttt{x}}$ denotes
+an external disturbance, and $e^{\texttt{f}}$ denotes an execution failure.
+Continuous physical motion, including motion of a target on a conveyor, remains
+part of the evolving workspace and is not itself a semantic event.
 
 \subsection{Online Primitive Command Sets}
 \label{sec:online_commands}
 
-The required output is an online sequence of command sets
+An executable command $c$ is an instruction that can be sent directly to a
+manipulator execution interface. It specifies, through the interface
+representation rather than a semantic graph node, the execution skill, semantic
+target or object, and manipulator that executes the skill. Thus, a semantic
+subtask or graph node is not itself a command; the required output is an online
+sequence of command sets
 \begin{equation}
  \mathbf{C}\triangleq
  (\mathbf{c}_1,\mathbf{c}_2,\cdots,\mathbf{c}_M),
  \label{eq:command_sequence}
 \end{equation}
-where $M$ is determined online and each $\mathbf{c}_m$ contains capability-valid
-commands that can be issued concurrently to the team.  The internal command
-fields are defined in Section~\ref{sec:construct_commands}, not in this problem
-formulation.
-
-The next command set is generated online by the role-shared coordination
+where $M$ is determined online, each $\mathbf{c}_m$ contains capability-valid
+commands that can be issued concurrently to the team, and the internal command
+fields are defined in Section~\ref{sec:construct_commands}. The next command
+set is generated online by the role-shared coordination
 pipeline from the task, heterogeneous capabilities, visual history, semantic
 event history, and previously issued command sets:
 \begin{equation}
@@ -55,10 +58,11 @@ event history, and previously issued command sets:
  \label{eq:online_command_generation}
 \end{equation}
 where $t_m$ is the decision time and $k_m$ is the number of semantic events
-observed by that time.  The operator $\Pi_{\mathrm{coord}}$ denotes the
-complete online pipeline whose internal stages construct $G$,
-$G_{\mathrm{assign}}$, executable commands, and verification status as defined
-in the Method.  The ordering of the arguments preserves the information flow
+observed by that time. The operator $\Pi_{\mathrm{coord}}$ in
+\eqref{eq:online_command_generation} denotes the
+complete online pipeline whose internal stages construct the dependency graph
+$G$, executable commands, and verification status as defined
+in the Method. The ordering of the arguments preserves the information flow
 from task specification and embodiment capabilities to observations, events,
 and prior command sets.
 
@@ -67,22 +71,19 @@ and prior command sets.
 
 The physical workspace may change continuously between decision times, and the
 event stream may contain task updates, external disturbances, or execution
-failures.  The command sequence must support concurrent progress while
+failures. The command sequence must support concurrent progress while
 respecting each manipulator's capability set and the dependencies induced by the
-task.  No scalar optimization objective is imposed in this formulation; the
+task. No scalar optimization objective is imposed in this formulation; the
 primary requirement is completion of the current task under the stated online
 information and execution conditions.
 
-\begin{problem}[Online heterogeneous manipulation coordination]
+\begin{problem}
 Given a natural-language task $\gamma$, a heterogeneous team $\mathcal{R}$ with
 capability sets $\{\mathcal{C}_i\}_{i=1}^{N}$, continuous visual observations
-$o(t)$, and event history from Eq.~\eqref{eq:semantic_events}, compute the online
-command-set sequence $\mathbf{C}$ from Eq.~\eqref{eq:command_sequence} such that
+$o(t)$, and the event history in~\eqref{eq:semantic_events}, compute the online
+command-set sequence $\mathbf{C}$ in~\eqref{eq:command_sequence} such that
 the primitive commands are capability-valid, independent commands can execute
 concurrently, and the current task is completed despite continuous physical
-evolution and the possible occurrence of $e^{\texttt{task}}$,
-$e^{\texttt{ext}}$, or $e^{\texttt{fail}}$.
+evolution and the possible occurrence of $e^{\texttt{t}}$, $e^{\texttt{x}}$,
+or $e^{\texttt{f}}$.\hfill $\blacksquare$
 \end{problem}
-
-The Method solves this problem through role-shared semantic coordination and
-event-driven updates that compile revised task decisions into executable commands.

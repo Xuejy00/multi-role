@@ -1,1 +1,21 @@
-% Reserved for the future abstract. Do not add expected or unverified results.
+\begin{abstract}
+Heterogeneous multi-arm manipulation can combine complementary workspaces,
+end-effectors, and sensing capabilities for concurrent task execution in
+dynamic workspaces. However, semantic coordination becomes difficult when the
+physical scene changes continually while task-relevant updates, external
+disturbances, and execution failures occur only at discrete moments. Static or
+monolithic semantic coordination can either miss these events or trigger
+unnecessary global replanning that interrupts still-valid execution. This work
+addresses this problem through role-shared semantic coordination for dynamic
+heterogeneous multi-manipulator scenarios. The framework assigns explicit
+semantic responsibilities to the affordance, planning, and verification roles
+over a shared semantic state that stores the current instruction, the
+assignment-aware primitive graph, task-relevant scene facts, and execution
+status. An event-driven selective semantic update procedure further identifies
+the affected scope caused by a task update, external disturbance, or execution
+failure, and revises only that scope while preserving unaffected valid
+execution. Simulation baselines, failure analysis, and ablations show that
+explicit responsibility separation reduces coordination errors and selective
+semantic updates enable faster adaptation in evolving environments; hardware
+trials examine the same mechanisms on a heterogeneous multi-arm platform.
+\end{abstract}
