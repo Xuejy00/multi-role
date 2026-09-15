@@ -1,0 +1,20 @@
+\begin{table}[t]
+  \centering
+  \caption{Hardware results over 10 trials. Resp. is event-response time (s);
+  Aff./Pend. is the affected-to-pending node ratio.}
+  \label{tab:hardware_results}
+  \small
+  \setlength{\tabcolsep}{2.8pt}
+  \begin{tabular}{lcccc}
+    \toprule
+    Condition & TSR & SCR (\%) & Resp. (s) & Aff./Pend. \\
+    \midrule
+    \texttt{H1} Normal
+      & 10/10 & 100.0 & --   & --   \\
+    \texttt{H2} Task Update
+      & 9/10  & 98.6  & 11.3 & 0.38 \\
+    \texttt{H3} External Disturbance
+      & 7/10  & 92.3  & 9.7  & 0.14 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

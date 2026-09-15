@@ -1,31 +1,40 @@
-\begin{table*}[t!]
+\begin{table}[t]
   \centering
-  \caption{The ablation comparison covers the three event
-  conditions in \texttt{C4}.  The metrics are Task Success Rate (TSR),
-  Makespan, and Event Response Time; every \textbf{***} entry is unmeasured.}
+  \caption{Ablation TSR, SCR, and Semantic Reasoning Time Ratio under
+  \texttt{C4} (30 trials).}
   \label{tab:ablation_comparison}
-  \setlength{\tabcolsep}{3.5pt}
-  \renewcommand{\arraystretch}{1.08}
-  \small
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lccc|ccc|ccc}
+  \setlength{\tabcolsep}{1.25pt}
+  \renewcommand{\arraystretch}{1.00}
+  \scriptsize
+  \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lccccccccc@{}}
     \toprule
-    & \multicolumn{3}{c|}{\texttt{C4-E1}} &
-      \multicolumn{3}{c|}{\texttt{C4-E2}} &
-      \multicolumn{3}{c}{\texttt{C4-E3}} \\
-    Method & TSR (\%) & Makespan & Response Time &
-             TSR (\%) & Makespan & Response Time &
-             TSR (\%) & Makespan & Response Time \\
+    \multirow{2}{*}{\textbf{Method}} &
+    \multicolumn{3}{c}{\textbf{E1}} &
+    \multicolumn{3}{c}{\textbf{E2}} &
+    \multicolumn{3}{c}{\textbf{E3}} \\
+    \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+    & {\fontsize{6.3}{6.8}\selectfont TSR}
+    & {\fontsize{6.3}{6.8}\selectfont SCR}
+    & {\fontsize{6.3}{6.8}\selectfont Time}
+    & {\fontsize{6.3}{6.8}\selectfont TSR}
+    & {\fontsize{6.3}{6.8}\selectfont SCR}
+    & {\fontsize{6.3}{6.8}\selectfont Time}
+    & {\fontsize{6.3}{6.8}\selectfont TSR}
+    & {\fontsize{6.3}{6.8}\selectfont SCR}
+    & {\fontsize{6.3}{6.8}\selectfont Time} \\
     \midrule
-    Ours                     & \expplaceholder & \expplaceholder & \expplaceholder &
-                               \expplaceholder & \expplaceholder & \expplaceholder &
-                               \expplaceholder & \expplaceholder & \expplaceholder \\
-    w/o Role Separation      & \expplaceholder & \expplaceholder & \expplaceholder &
-                               \expplaceholder & \expplaceholder & \expplaceholder &
-                               \expplaceholder & \expplaceholder & \expplaceholder \\
-    w/o Selective Replanning & \expplaceholder & \expplaceholder & \expplaceholder &
-                               \expplaceholder & \expplaceholder & \expplaceholder &
-                               \expplaceholder & \expplaceholder & \expplaceholder \\
+    \textbf{Ours}
+      & \textbf{30/30} & \textbf{100} & \textbf{.309}
+      & \textbf{30/30} & \textbf{100} & \textbf{.513}
+      & \textbf{27/30} & 88.9 & \textbf{.525} \\
+    \shortstack[l]{w/o Role\\Separation}
+      & 23/30 & 82.1 & .462
+      & \textbf{30/30} & \textbf{100} & .567
+      & 0/30 & 78.2 & .796 \\
+    \shortstack[l]{w/o Selective\\Replanning}
+      & 26/30 & \textbf{100} & .456
+      & \textbf{30/30} & \textbf{100} & .545
+      & 17/30 & \textbf{93.0} & .658 \\
     \bottomrule
-  \end{tabular}}
-\end{table*}
+  \end{tabular*}
+\end{table}

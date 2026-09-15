@@ -1,31 +1,28 @@
-\begin{table*}[t!]
+\begin{table}[t]
   \centering
-  \caption{Task Success Rate (TSR) for Ours and the three
-  baselines across the eight prescribed simulation conditions.  Every
-  \textbf{***} entry is unmeasured and encodes no ranking.}
+  \caption{Baseline task success rate (TSR) over 30 trials across conditions.}
   \label{tab:baseline_tsr}
-  \setlength{\tabcolsep}{4.1pt}
-  \renewcommand{\arraystretch}{1.08}
-  \small
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{lcccccccc}
+  \setlength{\tabcolsep}{2.0pt}
+  \renewcommand{\arraystretch}{1.00}
+  \scriptsize
+  \begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}lcccccccc@{}}
     \toprule
-    Method & \texttt{C1} & \texttt{C2-E1} & \texttt{C2-E2} &
-    \texttt{C2-E3} & \texttt{C3} & \texttt{C4-E1} &
-    \texttt{C4-E2} & \texttt{C4-E3} \\
+    \multirow{2}{*}{\textbf{Method}} &
+    \multirow{2}{*}{\textbf{C1}} &
+    \multicolumn{3}{c}{\textbf{C2}} &
+    \multirow{2}{*}{\textbf{C3}} &
+    \multicolumn{3}{c}{\textbf{C4}} \\
+    \cmidrule(lr){3-5}\cmidrule(lr){7-9}
+    & & E1 & E2 & E3 & & E1 & E2 & E3 \\
     \midrule
-    Ours                & \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder \\
-    End2End Planner     & \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder \\
-    One Agent per Robot & \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder \\
-    COHERENT-Adapted    & \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder & \expplaceholder &
-                           \expplaceholder & \expplaceholder \\
+    \textbf{Ours}
+      & 30/30 & 30/30 & 30/30 & 30/30 & 27/30 & 30/30 & 30/30 & 27/30 \\
+    End2End
+      & 30/30 & 10/30 & 27/30 & 3/30 & 0/30 & 0/30 & 3/30 & 13/30 \\
+    Agent per Robot
+      & 10/30 & 3/30 & 13/30 & 17/30 & 3/30 & 0/30 & 0/30 & 0/30 \\
+    COHERENT
+      & 30/30 & 23/30 & 30/30 & 20/30 & 30/30 & 23/30 & 27/30 & 17/30 \\
     \bottomrule
-  \end{tabular}}
-\end{table*}
+  \end{tabular*}
+\end{table}
