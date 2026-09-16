@@ -11,6 +11,8 @@ counts and mechanism ablations then localize the source of the differences.
 Hardware trials provide a physical check of the same semantic-state update
 sequence.
 
+\input{figures/figure4.tex}
+
 \subsection{Experimental Setup}
 \label{sec:experiment_setup}
 
@@ -24,7 +26,6 @@ safety stacks, and physical execution interface. Semantic calls use the LLM
 static and dynamic execution with task-relevant events \texttt{E1} (task
 update), \texttt{E2} (external disturbance), and \texttt{E3} (verified
 execution failure).
-
 Each simulation condition contains 30 independent trials with randomly sampled
 initial object layouts; events are injected at 30\%--70\% of subtask-completion
 progress.
@@ -35,7 +36,9 @@ and the associated figures. Hardware conditions use 10 trials.
 \subsection{Main Results}
 \label{sec:main_results}
 
-\input{figures/figure4.tex}
+\input{tables/table1_baseline_tsr.tex}
+\input{figures/figure5.tex}
+
 
 The proposed loop maintained high completion across all tested regimes while
 changing only the event-relevant portion of the shared state. TSR was 30/30 in
@@ -43,7 +46,6 @@ the static, task-update, and disturbance conditions and 27/30 in the two
 execution-failure conditions; SCR was 100\% except for 88.9\% in
 \texttt{C4-E3}. The unsuccessful trials therefore occurred only under verified
 execution-failure conditions rather than ordinary motion or task updates.
-
 Figure~\ref{fig:event_graph_update} tracks the corresponding semantic-state
 transitions. A task update revises $\gamma$ and the affected branches of $G$;
 an external disturbance refreshes $\mathcal{F}$ and reconstructs branches whose
@@ -70,29 +72,6 @@ maps the task and observation to commands without the shared semantic state.
 \textbf{Agent per Robot} gives each manipulator an independent language-model agent,
 whereas \textbf{COHERENT} adapts the heterogeneous multi-robot collaboration protocol
 of Liu~\emph{et al.}~\cite{liu2025coherent} to the same interface.
-Table~\ref{tab:baseline_tsr} reports their
-condition-wise TSR, making the event-specific gap below directly comparable.
-
-\input{tables/table1_baseline_tsr.tex}
-\input{figures/figure5.tex}
-
-The largest gap occurred when semantic events had to be incorporated. As
-reported in Table~\ref{tab:baseline_tsr}, Ours retained 30/30 on all task-update
-and disturbance cases and 27/30 under execution failure, while every baseline
-lost substantially more event trials. In static \texttt{C1}, all methods except
-Agent per Robot obtained 30/30, isolating the difference to event-aware
-coordination rather than the basic skill interface.
-
-The secondary metrics in Fig.~\ref{fig:baseline_secondary} show the same
-ordering: among the compared methods, Ours had the highest event-condition SCR
-and the lowest semantic-time ratio and token use. Ours had a longer
-successful-trial makespan than End2End but higher event-condition completion.
-
-\subsection{Failure Analysis and Ablation Study}
-\label{sec:failure_analysis}
-\label{sec:ablation}
-
-\subsubsection{Failure distributions}
 
 \begin{figure}[!t]
   \centering
@@ -106,30 +85,67 @@ successful-trial makespan than End2End but higher event-condition completion.
 \begin{figure}[!t]
   \centering
   \input{figures/figure6_failure_distribution.tex}
-  \vspace{-6pt}
+  \vspace{-0.1in}
   \caption{Failure counts and baseline proportions by failure type.}
   \label{fig:failure_distribution}
 \end{figure}
 
-The failure counts in Figure~\ref{fig:failure_distribution} quantify the
+
+Ours retained 30/30 on all task-update
+and disturbance cases and 27/30 under execution failure, while every baseline
+lost substantially more event trials.
+Table~\ref{tab:baseline_tsr} reports their
+condition-wise TSR, making the event-specific gap below directly comparable.
+The largest gap occurred when semantic events had to be incorporated.
+In static \texttt{C1}, all methods except
+Agent per Robot obtained 30/30, isolating the difference to event-aware
+coordination rather than the basic skill interface.
+The secondary metrics in Fig.~\ref{fig:baseline_secondary} show the same
+ordering: among the compared methods, Ours had the highest event-condition SCR
+and the lowest semantic-time ratio and token use. Ours had a longer
+successful-trial makespan than End2End but higher event-condition completion.
+
+
+\begin{figure*}[!t]
+  \centering
+  \input{figures/figure8_hardware_experiments.tex}
+  \vspace{-0.1in}
+  \caption{Hardware sequences provide verification evidence for normal motion,
+  task update, and external disturbance.}
+  \label{fig:hardware_experiments}
+\end{figure*}
+
+\subsection{Failure Analysis and Ablation Study}
+\label{sec:failure_analysis}
+\label{sec:ablation}
+
+\subsubsection{Cause of Task Failures}
+
+
+The failure counts in Fig.~\ref{fig:failure_distribution} quantify the
 intermediate coordination state. Ours had no capability, assignment, or timeout
 failures and only six physical execution anomalies, whereas the baselines
-exhibited the corresponding semantic failures. Figure~\ref{fig:failure_analysis}
+exhibited the corresponding semantic failures. Fig.~\ref{fig:failure_analysis}
 shows representative cases: role ownership filters invalid dispatches and
-verification exposes residual physical anomalies for event-scoped repair.
+verification exposes residual physical anomalies for repair.
 
-\subsubsection{Mechanism ablations}
+\subsubsection{Key Ablations}
 
 \input{tables/table2_ablation_comparison.tex}
 
 \begin{figure}[!t]
   \centering
   \input{figures/figure7_ablation_failure_count_single.tex}
-  \vspace{-6pt}
+  \vspace{-0.1in}
   \caption{Ablation failure counts under \texttt{C4}. A1 and A2 denote the
   variants without role separation and selective replanning, respectively.}
   \label{fig:ablation_failure_count}
 \end{figure}
+
+
+\input{tables/table3_hardware_results.tex}
+\input{figures/figure10_hardware_gantt.tex}
+
 
 Under \texttt{C4}, the ablations remove role ownership or selective replanning.
 Table~\ref{tab:ablation_comparison} shows lower event TSR for both, most under
@@ -151,39 +167,30 @@ manipulator on an AgileX Ranger Mini V2. An AgileX SCOUT MINI carries task
 objects as a teleoperated moving carrier; it is not a semantic coordinator.
 The same shared state, primitive-skill interface, and event update path are
 used on hardware. Each condition is repeated for 10 trials.
+Figure~\ref{fig:hardware_role_outputs} exposes the role-level semantic updates
+for the task-update and disturbance trials. In the top row, the revised
+instruction enters $\gamma$, the affordance role refreshes $\mathcal{F}$, the
+verification role identifies the affected nodes, and the planning role revises
+$G$ while retaining unaffected work. The object relocation
+refreshes $\mathcal{F}$, verification records the failed execution status in
+$z$ and traces the invalidated dependencies, and planning repairs the affected
+branch of $G$. The three role outputs are committed together as the
+corresponding update of $S_{\mathrm{sem}}$ before dispatch resumes.
 
-\input{tables/table3_hardware_results.tex}
 
-\input{figures/figure10_hardware_gantt.tex}
+
 
 \begin{figure}[!t]
   \centering
   \includegraphics[width=\columnwidth]{figures/figure_role/figure_role.pdf}
   \caption{Intermediate outputs of the affordance, verification, and planning
   roles after the task-update event in the middle panel of
-  Fig.~\ref{fig:hardware_gantt} (top row) and the external disturbance in the
-  right panel (bottom row). The three role outputs jointly compose the
-  corresponding update of the shared semantic state $S_{\mathrm{sem}}$.}
+  Fig.~\ref{fig:hardware_gantt} (\textbf{Top}) and the external disturbance in the
+  right panel (\textbf{Bottom}).}
+
   \label{fig:hardware_role_outputs}
 \end{figure}
 
-Figure~\ref{fig:hardware_role_outputs} exposes the role-level semantic updates
-for the task-update and disturbance trials. In the top row, the revised
-instruction enters $\gamma$, the affordance role refreshes $\mathcal{F}$, the
-verification role identifies the affected nodes, and the planning role revises
-$G$ while retaining unaffected work. In the bottom row, the object relocation
-refreshes $\mathcal{F}$, verification records the failed execution status in
-$z$ and traces the invalidated dependencies, and planning repairs the affected
-branch of $G$. The three role outputs are committed together as the
-corresponding update of $S_{\mathrm{sem}}$ before dispatch resumes.
-
-\begin{figure*}[!t]
-  \centering
-  \input{figures/figure8_hardware_experiments.tex}
-  \caption{Hardware sequences provide verification evidence for normal motion,
-  task update, and external disturbance.}
-  \label{fig:hardware_experiments}
-\end{figure*}
 
 The three scenarios isolate normal motion, a task update, and a disturbance.
 Table~\ref{tab:hardware_results} reports 10/10 TSR and 100.0\% SCR for

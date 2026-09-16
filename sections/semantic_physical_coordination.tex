@@ -1,9 +1,9 @@
-\subsection{Update the semantic state under events}
+\subsection{Event-driven Selective Semantic Updates}
 \label{sec:semantic_physical_coordination}
 
-Task-relevant events re-enter the shared semantic state, whereas continuous
+Task-relevant events enter the shared semantic state, whereas continuous
 physical evolution remains within manipulator-local execution. Event handling
-identifies the invalid scope and invokes planning only there, as illustrated in
+identifies the invalid scope and invokes adaptation, as shown in
 Fig.~\ref{fig:event_graph_update}.
 
 \begin{figure}[t!]
@@ -12,13 +12,13 @@ Fig.~\ref{fig:event_graph_update}.
   \caption{Selective graph transitions
   $G\rightarrow e_k\rightarrow G'$ for task updates, external
   disturbances, and execution failures. Purple contours mark
-  $\mathcal{N}_k^{\mathrm{aff}}$, unfinished or dependency-invalidated nodes
+  $\mathcal{N}_k^{\texttt{aff}}$, unfinished or dependency-invalidated nodes
   requiring reconsideration and reconstruction; failed attempts recorded in
   $z$ need not be reconstructed. Green nodes are retained and blue nodes are new.}
   \label{fig:event_graph_update}
 \end{figure}
 
-\subsubsection{Identify the Affected Subtasks}
+\subsubsection{Event-affected Scope Identification}
 \label{sec:affected_subtasks}
 
 The event types are defined in~\eqref{eq:semantic_events}. A task update
@@ -27,7 +27,7 @@ fresh visual evidence, and an execution failure is established by verification.
 The event then enters the verification role, which identifies the affected
 assignment-aware primitive nodes:
 \begin{equation}
- \mathcal{N}_k^{\texttt{aff}}=
+ \mathcal{N}_k^{\texttt{aff}}\triangleq
  \rho_V^{\texttt{aff}}\bigl(
  e_k,\gamma,G,\mathcal{F},z\bigr),
  \label{eq:affected_subtasks}
@@ -43,12 +43,12 @@ dependencies in $G$ to include unfinished descendants whose validity or
 executability depends on those nodes, while independent valid nodes remain
 outside $\mathcal{N}_k^{\texttt{aff}}$ and are preserved.
 
-\subsubsection{Update the Semantic State}
+\subsubsection{Selective Semantic-state Reconstruction}
 \label{sec:update_affected_state}
 
-The selective update produces the next committed semantic state
+The selective update produces the next committed semantic state:
 \begin{equation}
- S_{\nu+1}^{\texttt{sem}}=
+ S_{\nu+1}^{\texttt{sem}}\triangleq
  \mathcal{U}\!\left(
  S_\nu^{\texttt{sem}},e_k,\mathcal{N}_k^{\texttt{aff}}\right),
  \label{eq:semantic_state_update}
@@ -71,24 +71,24 @@ $\mathcal{F}$, $G$, and $z$; together with the event-consistent $\gamma$, these
 components form $S_{\nu+1}^{\texttt{sem}}$ and advance the semantic version from
 $\nu$ to $\nu+1$.
 
-\subsection{Dispatch and execute primitive commands}
+\subsection{Primitive-command Dispatch and Execution}
 \label{sec:dispatch_execute}
 
-\subsubsection{Construct Execution Commands}
+\subsubsection{Capability-valid Command Construction}
 \label{sec:construct_commands}
 
-The command notion introduced in Section~\ref{sec:online_commands} is
+The command notion  is
 instantiated after planning has produced assignment-aware primitive nodes. At
-each execution step, $\mathcal{N}_{\mathrm{exec}}$ is the temporary set of
-currently executable primitive subtasks in $G$. A node $n$
-belongs to $\mathcal{N}_{\mathrm{exec}}$ when
+each execution step, $\mathcal{N}_{\texttt{exec}}$ is the temporary set of
+executable primitive subtasks in $G$. A node $n$
+belongs to $\mathcal{N}_{\texttt{exec}}$ when
 $z(n)\ne\texttt{COMPLETE}$ and $z(n')=\texttt{COMPLETE}$ for every
 $n'\in\operatorname{pred}(n)$. For any
-$n\in\mathcal{N}_{\mathrm{exec}}$, command construction is
+$n\in\mathcal{N}_{\texttt{exec}}$, command construction is given by:
 \begin{equation}
  c_n=\phi_C(n),
  \qquad
- \phi_C:\mathcal{N}_{\mathrm{exec}}\rightarrow\mathcal{C},
+ \phi_C:\mathcal{N}_{\texttt{exec}}\rightarrow\mathcal{C},
  \label{eq:execution_command}
 \end{equation}
 where $\phi_C$ is the command construction function and $\mathcal{C}$ denotes
@@ -96,10 +96,10 @@ the executable command space, distinct from the per-manipulator capability
 sets $\{\mathcal{C}_i\}_{i=1}^{N}$. Although $n$ contains semantic execution
 information, $c_n$ is the executable command sent to the robot interface. At
 each execution step, the commands generated from
-$\mathcal{N}_{\mathrm{exec}}$ form a concurrent command set
+$\mathcal{N}_{\texttt{exec}}$ form a concurrent command set
 $\mathbf{c}_m=\{c_{n_1},c_{n_2},\cdots\}$.
 
-\subsubsection{Execute Commands and Verify Outcomes}
+\subsubsection{Local Execution and Outcome Verification}
 \label{sec:manipulator_local_execution}
 
 The assigned local skill executes each command using the manipulator's current
@@ -109,12 +109,12 @@ $\mathcal{F}$ through $\mathcal{F}\gets\rho_A(o_t')$ without semantic
 replanning. For each executed command, verification extracts $\eta_n$ via
 \eqref{eq:verification_evidence} and uses $(\eta_n,\gamma)$ to update $z(n)$ and
 detect any $e_k$ via~\eqref{eq:verification_status}. A detected event triggers
-affected-scope identification and selective state revision.
+identification and selective state revision.
 
-\subsection{Coordinate the closed loop}
+\subsection{Closed-Loop Coordination}
 \label{sec:closed_loop_coordination}
 
-\subsubsection{Overall Algorithm}
+\subsubsection{Online Coordination Algorithm}
 
 Algorithm~\ref{alg:coordination} summarizes the online procedure. At task start,
 the affordance role observes the scene and extracts $\mathcal{F}$. The planning
@@ -136,55 +136,59 @@ dependency-closed scope is intended to shorten semantic-event response time and
 reduce the chance that ongoing physical evolution removes an available
 manipulation opportunity.
 
-\begin{algorithm}[t]
-\caption{Online role-shared semantic coordination}
+\begin{algorithm}[t!]
+\caption{Online role-shared semantic coord.}
 \label{alg:coordination}
-\KwIn{task instruction $\gamma$, observation stream $o(t)$,
-heterogeneous capability sets $\{\mathcal{C}_i\}_{i=1}^{N}$, and
-manipulator team $\mathcal{R}$}
-\KwOut{online command-set sequence $\mathbf{C}$}
-Extract $\mathcal{F}$ from $o(t)$\;
-Derive an intermediate dependency description from $\gamma$ and $\mathcal{F}$\;
+\KwIn{$\gamma$, $o(t)$, $\{\mathcal{C}_i\}_{i=1}^{N}$, $\mathcal{R}$}
+\KwOut{$\mathbf{C}$}
+
+Extract $\mathcal{F}$ from $o(0)$\;
 Construct $G$ by~\eqref{eq:planning_pipeline}\;
-Initialize $S_\nu^{\texttt{sem}}$ by~\eqref{eq:semantic_state} and
+Initialize $S_\nu^{\texttt{sem}}$ by~\eqref{eq:semantic_state};
 $\mathbf{C}\gets()$\;
-\While{task is not completed}{
-    Select
-    $\mathcal{N}_{\mathrm{exec}}=\{n\in\mathcal{N}\mid
-    z(n)\ne\texttt{COMPLETE}, z(n')=\texttt{COMPLETE},
+
+\While{task incomplete}{
+    $\mathcal{N}_{\texttt{exec}}\gets
+    \{n\in\mathcal{N}\mid z(n)\ne\texttt{COMPLETE},
+    \ z(n')=\texttt{COMPLETE},\
     \forall n'\in\operatorname{pred}(n)\}$\;
-    Generate $c_n$ by~\eqref{eq:execution_command}\;
-    Assemble $\mathbf{c}_m$ and append it to $\mathbf{C}$\;
-    Execute $\mathbf{c}_m$, then refresh $\mathcal{F}$ from $o_t'$\;
-    \ForEach{executed command $c_n\in\mathbf{c}_m$}{
-        Extract $\eta_n$ via~\eqref{eq:verification_evidence}\;
-        Update $z(n)$ via~\eqref{eq:verification_status}\;
+
+    $\mathbf{c}_m\gets
+    \{c_n\mid n\in\mathcal{N}_{\texttt{exec}}\}$
+    using~\eqref{eq:execution_command}\;
+    Append $\mathbf{c}_m$ to $\mathbf{C}$ and execute it\;
+    Refresh $\mathcal{F}$ from $o_t'$\;
+
+    \ForEach{$c_n\in\mathbf{c}_m$}{
+        Extract $\eta_n$ by~\eqref{eq:verification_evidence}\;
+        Update $(e_k,z(n))$ by~\eqref{eq:verification_status}\;
     }
-    \If{a task-relevant event $e_k$ is detected}{
+
+    \If{$e_k$ is detected}{
         Identify $\mathcal{N}_k^{\texttt{aff}}$
         by~\eqref{eq:affected_subtasks}\;
-        Retain the nodes in $G$ outside $\mathcal{N}_k^{\texttt{aff}}$\;
-        Replan $\mathcal{N}_k^{\texttt{aff}}$ using the latest $\mathcal{F}$
-        and reconnect the revised subgraph\;
-        Commit the three role updates as $S_{\nu+1}^{\texttt{sem}}$
-        by~\eqref{eq:semantic_state_update} and set $\nu\gets\nu+1$\;
+        Retain $G\setminus\mathcal{N}_k^{\texttt{aff}}$ and reconstruct
+        the affected subgraph using $\mathcal{F}$\;
+        Commit $S_{\nu+1}^{\texttt{sem}}$
+        by~\eqref{eq:semantic_state_update};
+        $\nu\gets\nu+1$\;
     }
 }
 \end{algorithm}
 
-\subsubsection{Event-specific use of the framework}
+\subsubsection{Event-specific Coordination}
 \label{sec:event_specific_algorithm}
 
 The same protocol handles all events. For $\texttt{E1}$, verification marks the
 requirement-changing branch and planning regenerates only that branch. For
 $\texttt{E2}$, refreshed $\mathcal{F}$ invalidates nodes whose target,
 feasibility, or dependency assumptions changed. For $\texttt{E3}$, the failed
-node and unfinished downstream descendants receive a capability-valid repair
+node and unfinished downstream descendants receive a  repair
 branch. Valid completed nodes, independent pending work, and local tracking are
 retained. Thus, affordance supplies current facts, verification selects scope,
 and planning revises only the invalidated semantic subgraph.
 
-\subsubsection{Complexity}
+\subsubsection{Computational Complexity}
 
 The explicit graph operations in Algorithm~\ref{alg:coordination} are linear
 in the maintained graph when predecessor lists are stored with the graph.

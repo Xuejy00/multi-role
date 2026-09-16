@@ -16,21 +16,16 @@ incompatible task views. The challenge is to
 establish one capability-aware semantic authority across robots and revise only
 the semantics invalidated by a new instruction, disturbance, or verified
 failure while local controllers remain responsive to continuous scene
-evolution. We propose RoSC, a role-shared semantic coordination framework with
-an event-driven selective update that follows event detection $\rightarrow$
-affected-scope selection $\rightarrow$ semantic-state revision $\rightarrow$
-continued dispatch from a consistent frontier. Simulation baselines, failure
-analysis, and mechanism ablations test these mechanisms, while hardware trials
-check the same update sequence during physical execution.
+evolution.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/figure1_final_lowercase.pdf}
     \caption{The shared semantic state coordinates three roles while preserving
     local execution. \textbf{Top:} framework and simulated conveyor workspace;
-    \textbf{Middle:} event Gantt charts; \textbf{Bottom left:} normal hardware
-    execution; \textbf{Bottom middle:} hardware task update; \textbf{Bottom
-    right:} hardware external disturbance.}
+    \textbf{Middle:} event Gantt charts; \textbf{Bottom-left:} normal hardware
+    execution; \textbf{Bottom-middle:} online task update; \textbf{Bottom-right:}
+    disturbance by human.}
     \label{fig:scenario}
 \end{figure}
 
@@ -50,7 +45,13 @@ check the same update sequence during physical execution.
 \subsection{Our Method}
 \label{sec:our_method_intro}
 
-Figure~\ref{fig:method_overview} shows the resulting framework. At task start,
+We propose RoSC, a role-shared semantic coordination framework with
+an event-driven selective update that follows event detection $\rightarrow$
+affected-scope selection $\rightarrow$ semantic-state revision $\rightarrow$
+continued dispatch from a consistent frontier. Simulation baselines, failure
+analysis, and mechanism ablations test these mechanisms, while hardware trials
+check the same update sequence during physical execution.
+As shown in Figure~\ref{fig:method_overview},
 the affordance role evaluates object regions, reachability, obstructions, and
 scene changes to produce $\mathcal{F}$; the planning role decomposes the task,
 matches skills and capabilities to manipulators, constructs $G$, and initializes
@@ -71,4 +72,4 @@ multi-manipulator scenarios with continual physical changes, assigning explicit
 responsibility to the affordance, planning, and verification roles; and (II) An
 event-driven selective semantic update procedure is developed to efficiently
 handle task updates, external disturbances, and execution failures while
-preserving unaffected valid execution.
+preserving valid execution.

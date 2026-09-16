@@ -18,7 +18,6 @@ $\mathcal{C}_i$. A capability set describes the primitive actions, targets,
 and embodiment conditions available to the corresponding manipulator. The
 system receives a natural-language task $\gamma$ and continuous visual
 observations $o(t)$ while the physical workspace evolves.
-
 The execution process can also produce discrete semantic events
 \begin{equation}
  e_k\in\mathcal{E}\triangleq
@@ -38,7 +37,7 @@ manipulator execution interface. It specifies, through the interface
 representation rather than a semantic graph node, the execution skill, semantic
 target or object, and manipulator that executes the skill. Thus, a semantic
 subtask or graph node is not itself a command; the required output is an online
-sequence of command sets
+sequence of command sets:
 \begin{equation}
  \mathbf{C}\triangleq
  (\mathbf{c}_1,\mathbf{c}_2,\cdots,\mathbf{c}_M),

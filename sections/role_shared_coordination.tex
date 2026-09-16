@@ -11,7 +11,7 @@ updates, Section~\ref{sec:dispatch_execute} constructs and verifies executable
 commands, and Section~\ref{sec:closed_loop_coordination} gives the online
 algorithm and complexity discussion.
 
-\subsection{Construct the role-shared semantic state}
+\subsection{Role-Shared Semantic State and Responsibilities}
 \label{sec:role_shared_coordination}
 
 The shared semantic state is the authoritative task-level state maintained by
@@ -28,11 +28,12 @@ records primitive-subtask execution status. This state excludes
 manipulator-local control variables and stores only the semantic information
 used for task-level coordination.
 
+\subsubsection{Scene Grounding and Feasibility Assessment}
 The affordance role maintains $\mathcal{F}$ through
 \begin{equation*}
- \rho_A:o(t)\mapsto\mathcal{F}.
+ \rho_A:o(t)\mapsto\mathcal{F},
 \end{equation*}
-It extracts task-relevant scene and
+which  extracts task-relevant scene and
 feasibility facts from the observation stream, including object grounding,
 relations, affordances, and feasible primitive interactions. During
 initialization, observed objects are grounded to semantic targets in
@@ -40,53 +41,51 @@ $\gamma$. After each primitive execution, the latest observation refreshes
 $\mathcal{F}$ before planning or verification consumes the updated physical
 facts.
 
+\subsubsection{Task Decomposition and Capability Assignment}
 The planning role maintains $G$ by first deriving an intermediate abstract
 dependency graph from $\gamma$ and $\mathcal{F}$, then adding manipulator
 assignment and execution dependencies. The final assignment-aware primitive
-graph is
+graph is given by:
 \begin{equation}
- \begin{aligned}
- G&=
+ G=
  \rho_P\!\left(
- \gamma,\mathcal{F},\{\mathcal{C}_i\}_{i=1}^{N},\mathcal{R}\right)\\
- &\triangleq\bigl(\mathcal{N},\mathcal{L}\bigr),
- \end{aligned}
+ \gamma,\mathcal{F},\{\mathcal{C}_i\}_{i=1}^{N},\mathcal{R}\right)
+\triangleq\bigl(\mathcal{N},\mathcal{L}\bigr),
  \label{eq:planning_pipeline}
 \end{equation}
-where, for each $n\in\mathcal{N}$,
+where for each $n\in\mathcal{N}$
 $n\triangleq\bigl(s_n,q_n,r_i,\kappa_n\bigr)$ denotes an assigned primitive
 node with primitive skill type $s_n$, semantic target $q_n$, assigned
 manipulator $r_i$, and execution skill $\kappa_n$. The relations in
-$\mathcal{L}$ include the semantic task dependencies from the intermediate
-dependency graph and manipulator-aware dependencies induced by $\mathcal{R}$.
+$\mathcal{L}$ include the semantic dependencies from the dependency graph
+and manipulator-aware dependencies by $\mathcal{R}$.
 Thus, $G$ records what to execute, who executes it, and which skill
 is used. For $n\in\mathcal{N}$,
-$\operatorname{pred}(n)$ denotes the predecessor nodes $j$ such that
+$\operatorname{pred}(n)$ denotes the predecessor $j$ such that
 $(j,n)\in\mathcal{L}$.
 
+\subsubsection{Execution Assessment and Status Tracking}
 The verification role maintains $z$ after command execution. For an executable
 command $c_n$, the command sent to the assigned manipulator interface specifies
 the required execution skill and semantic target associated with primitive
 subtask $n$. After $c_n$ is executed, the latest observation first refreshes
-$\mathcal{F}$; the verification role then extracts transient execution
-evidence
+$\mathcal{F}$; the verification role then extracts transient evidence:
 \begin{equation}
  \eta_n=\rho_V^{\texttt{e}}\bigl(c_n,\mathcal{F}\bigr),
  \label{eq:verification_evidence}
 \end{equation}
 where $\eta_n$ is the transient execution evidence for the executed command.
 The verification role compares evidence with the current instruction to update
-status and detect task-relevant events:
+status and detect new events:
 \begin{equation}
  \bigl(e_k,z(n)\bigr)=
  \rho_V^{\texttt{z}}\bigl(\eta_n,\gamma\bigr),
  \label{eq:verification_status}
 \end{equation}
-Here, $z(n)$ is the primitive-subtask status and $e_k$ records any detected
+where~$z(n)$ is the primitive-subtask status and $e_k$ records any detected
 event in~\eqref{eq:semantic_events}; its affected scope is identified in
 Section~\ref{sec:semantic_physical_coordination}. Without a task-relevant
 inconsistency, $e_k$ is null and only $z(n)$ is updated.
-
 Within $S_\nu^{\texttt{sem}}=(\gamma,G,\mathcal{F},z)$, the affordance,
 planning, and verification roles own $\mathcal{F}$, $G$, and $z$, respectively.
 An updated $\gamma$ enters as an external semantic constraint and is committed

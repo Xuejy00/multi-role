@@ -3,26 +3,47 @@
 \providecommand{\finalchange}[1]{#1}
 \providecommand{\localexecchange}[1]{#1}
 
-Language-guided grounding~\cite{huang2023inner,liang2023code,rana2023sayplan,
-huang2023voxposer} supports several LLM-based multi-robot coordination patterns:
-RoCo uses per-robot dialogue; COHERENT, centralized proposals and feedback;
-MALLVI, specialist reactivation; and CoMuRoS and DEXTER-LLM, event-based task or
-assignment updates~\cite{
+Language-guided grounding methods translate natural-language instructions into
+spatial representations, executable programs, or scene-grounded task
+plans~\cite{huang2023inner,liang2023code,rana2023sayplan,
+huang2023voxposer}. Building on these capabilities, LLM-based multi-robot
+frameworks adopt different coordination structures: RoCo uses inter-robot
+dialogue; COHERENT relies on centralized proposals and execution feedback;
+MALLVI reactivates specialized agents when needed; and CoMuRoS and DEXTER-LLM
+revise tasks or assignments in response to events~\cite{
 mandi2024roco,liu2025coherent,taji2026mallvi,
-borate2026comuros,zhu2025dexter}. Other systems use capability coalitions,
-dependency-based allocation, or planning, manipulation, and verification
-agents~\cite{kannan2024smartllm,obata2025lipllm,he2026closedloop}. For
-heterogeneous multi-arm manipulation under continuous physical evolution and
-discrete semantic events, RoSC maintains
-$S_\nu^{\texttt{sem}}=(\gamma,G,\mathcal{F},z)$, assigns $\mathcal{F}$, $G$,
-and $z$ to the affordance, planning, and verification roles, and selectively
-reconstructs affected subgraphs while retaining valid execution.
+borate2026comuros,zhu2025dexter}. Other systems explicitly incorporate
+capability-aware coalitions, dependency-based task allocation, or separate
+planning, manipulation, and verification agents~\cite{
+kannan2024smartllm,obata2025lipllm,he2026closedloop}. Collectively, these
+methods establish effective mechanisms for grounding, agent interaction, and
+task revision, but they do not explicitly organize ownership of the distinct
+semantic components that must remain consistent as multiple heterogeneous
+manipulators execute concurrently. RoSC addresses this issue by maintaining
+the authoritative shared state and assigning responsibility
+to the affordance, planning, and verification
+roles, respectively. When a discrete semantic event occurs, these roles
+identify its dependency-closed affected scope and reconstruct only the
+invalidated subgraph, while preserving unaffected valid execution and leaving
+continuous physical adaptation to the local controllers.
+
 
 Dynamic manipulation supports tracked or reactive grasping and visual
 servoing~\cite{marturi2019dynamic,maranci2026reactive,liu2023target,
-haviland2020finalphase}, while execution
-monitoring and continual replanning address runtime deviations~\cite{
-pettersson2005execution,brenner2009continual,levihn2013foresight,
-pezzato2023active}. These methods support physical execution and recovery;
-ours defines when feedback refreshes semantic facts, status, or event-scoped
-planning.
+haviland2020finalphase}, allowing local controllers to continuously adapt
+end-effector motion to moving targets and perception updates. Execution
+monitoring and continual replanning further address runtime deviations by
+detecting discrepancies between expected and observed outcomes and invoking
+recovery or plan revision~\cite{pettersson2005execution,brenner2009continual,
+levihn2013foresight,pezzato2023active}. These methods primarily focus on
+maintaining physical feasibility, monitoring action execution, or revising a
+plan after deviations. However, in heterogeneous multi-manipulator settings,
+the resulting feedback may affect different parts of the team-level semantic
+state: a new observation may change an object's affordance, a failed action may
+invalidate its execution status and downstream dependencies, and a revised
+instruction may alter only one task branch. RoSC explicitly separates these
+responsibilities among affordance, verification, and planning roles. It uses
+the shared semantic state to determine which information must be refreshed,
+which subtasks are affected, and whether planning should be invoked, thereby
+supporting event-scoped semantic revision while preserving unaffected valid
+execution.
