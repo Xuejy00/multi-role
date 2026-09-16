@@ -3,27 +3,58 @@
   \setlength{\tabcolsep}{3pt}
   % Equal-height cells align both columns while preserving each PDF aspect ratio.
   \newcommand{\ganttpanel}[1]{%
-    \parbox[c][1.08in][c]{.485\columnwidth}{\centering
+    \parbox[c][.93in][c]{.485\columnwidth}{\centering
       \includegraphics[width=.485\columnwidth]{#1}}}
   % The trajectory PDFs are shorter than their paired Gantt charts; lower
   % them slightly so the three row pairs share a common lower edge.
   \newcommand{\ganttpanelleft}[1]{%
-    \parbox[c][1.08in][c]{.485\columnwidth}{\centering
+    \parbox[c][.93in][c]{.485\columnwidth}{\centering
       \raisebox{+0.15in}{\includegraphics[width=.485\columnwidth]{#1}}}}
   \newcommand{\ganttrlabel}[1]{%
-    \llap{\raisebox{.53in}{\textbf{(#1)}\hspace{2pt}}}}
+    \llap{\raisebox{.46in}{\textbf{(#1)}\hspace{2pt}}}}
+  % Compact semantic-role response strip for each event row.
+  \definecolor{g4affline}{HTML}{3E8050}
+  \definecolor{g4afffill}{HTML}{F2F8F3}
+  \definecolor{g4verline}{HTML}{B56A16}
+  \definecolor{g4verfill}{HTML}{FFF8ED}
+  \definecolor{g4planline}{HTML}{356FA8}
+  \definecolor{g4planfill}{HTML}{F1F6FB}
+  \newcommand{\rolechip}[5]{%
+    \node[draw=#1,fill=#2,rounded corners=1.5pt,line width=0.45pt,
+      minimum width=.285\columnwidth,text width=.265\columnwidth,
+      minimum height=.19in,inner xsep=1.2pt,inner ysep=.6pt,
+      align=center,font=\sffamily\fontsize{4.9}{5.4}\selectfont]
+      at (#5) {\textbf{#3}\\[-1.5pt]#4};}
   \begin{tabular}{@{}cc@{}}
     \ganttrlabel{a}\ganttpanelleft{figures/figure_gantt/a1.pdf} &
     \ganttpanel{figures/figure_gantt/a2.pdf} \\
+    \multicolumn{2}{@{}c@{}}{%
+      \begin{tikzpicture}[baseline=(current bounding box.center),x=1in,y=1in]
+        \rolechip{g4affline}{g4afffill}{Affordance}{grounding unchanged}{0,0}
+        \rolechip{g4verline}{g4verfill}{Verification}{instruction inconsistency}{.99,0}
+        \rolechip{g4planline}{g4planfill}{Planning}{replace affected branch}{1.98,0}
+      \end{tikzpicture}} \\[-2pt]
     \noalign{\vspace{2pt}}
     \ganttrlabel{b}\ganttpanelleft{figures/figure_gantt/b1.pdf} &
     \ganttpanel{figures/figure_gantt/b2.pdf} \\
+    \multicolumn{2}{@{}c@{}}{%
+      \begin{tikzpicture}[baseline=(current bounding box.center),x=1in,y=1in]
+        \rolechip{g4affline}{g4afffill}{Affordance}{target location updated}{0,0}
+        \rolechip{g4verline}{g4verfill}{Verification}{dependency invalidated}{.99,0}
+        \rolechip{g4planline}{g4planfill}{Planning}{recover downstream branch}{1.98,0}
+      \end{tikzpicture}} \\[-2pt]
     \noalign{\vspace{2pt}}
     \ganttrlabel{c}\ganttpanelleft{figures/figure_gantt/c1.pdf} &
-    \ganttpanel{figures/figure_gantt/c2.pdf}
+    \ganttpanel{figures/figure_gantt/c2.pdf} \\
+    \multicolumn{2}{@{}c@{}}{%
+      \begin{tikzpicture}[baseline=(current bounding box.center),x=1in,y=1in]
+        \rolechip{g4affline}{g4afffill}{Affordance}{workspace feasible}{0,0}
+        \rolechip{g4verline}{g4verfill}{Verification}{n1 failed}{.99,0}
+        \rolechip{g4planline}{g4planfill}{Planning}{assign repair branch}{1.98,0}
+      \end{tikzpicture}}
   \end{tabular}
 
-  \vspace{-5pt}
+  \vspace{2pt}
   \input{figures/figure_task_skill_legend.tex}
 
   \caption{Paired trajectories and execution timelines expose the localized
