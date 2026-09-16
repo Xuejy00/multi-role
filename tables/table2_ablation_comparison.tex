@@ -1,6 +1,6 @@
 \begin{table}[t]
   \centering
-  \caption{Ablation TSR, SCR and Reasoning Time under
+  \caption{Ablation TSR, SCR and Semantic Reasoning Time Ratio under
   \texttt{C4} (30 trials).}
   \label{tab:ablation_comparison}
   \setlength{\tabcolsep}{1.25pt}
@@ -15,26 +15,26 @@
     \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
     & {\fontsize{6.3}{6.8}\selectfont TSR}
     & {\fontsize{6.3}{6.8}\selectfont SCR}
-    & {\fontsize{6.3}{6.8}\selectfont Time}
+    & {\fontsize{6.3}{6.8}\selectfont Ratio (\%)}
     & {\fontsize{6.3}{6.8}\selectfont TSR}
     & {\fontsize{6.3}{6.8}\selectfont SCR}
-    & {\fontsize{6.3}{6.8}\selectfont Time}
+    & {\fontsize{6.3}{6.8}\selectfont Ratio (\%)}
     & {\fontsize{6.3}{6.8}\selectfont TSR}
     & {\fontsize{6.3}{6.8}\selectfont SCR}
-    & {\fontsize{6.3}{6.8}\selectfont Time} \\
+    & {\fontsize{6.3}{6.8}\selectfont Ratio (\%)} \\
     \midrule
     \textbf{Ours}
-      & \textbf{30/30} & \textbf{100} & \textbf{.309}
-      & \textbf{30/30} & \textbf{100} & \textbf{.513}
-      & \textbf{27/30} & 88.9 & \textbf{.525} \\
+      & \textbf{30/30} & \textbf{100} & \textbf{30.9}
+      & \textbf{30/30} & \textbf{100} & \textbf{51.3}
+      & \textbf{27/30} & 88.9 & \textbf{52.5} \\
     \shortstack[l]{w/o Role\\Separation}
-      & 23/30 & 82.1 & .462
-      & \textbf{30/30} & \textbf{100} & .567
-      & 0/30 & 78.2 & .796 \\
+      & 23/30 & 82.1 & 46.2
+      & \textbf{30/30} & \textbf{100} & 56.7
+      & 0/30 & 78.2 & 79.6 \\
     \shortstack[l]{w/o Selective\\Replanning}
-      & 26/30 & \textbf{100} & .456
-      & \textbf{30/30} & \textbf{100} & .545
-      & 17/30 & \textbf{93.0} & .658 \\
+      & 26/30 & \textbf{100} & 45.6
+      & \textbf{30/30} & \textbf{100} & 54.5
+      & 17/30 & \textbf{93.0} & 65.8 \\
     \bottomrule
   \end{tabular*}
 \end{table}
