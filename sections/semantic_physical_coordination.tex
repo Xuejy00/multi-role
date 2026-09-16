@@ -104,8 +104,9 @@ $\mathbf{c}_m=\{c_{n_1},c_{n_2},\cdots\}$.
 
 The assigned local skill executes each command using the manipulator's current
 perception, tracking, and control stack. Its target reference allows continuous
-motion to remain local. After execution, the latest observation refreshes
-$\mathcal{F}$ through $\mathcal{F}\gets\rho_A(o_t')$ without semantic
+motion to remain local. After execution, $o_t'$ denotes the newly obtained
+observation. It refreshes $\mathcal{F}$ through
+$\mathcal{F}\gets\rho_A(o_t')$ without semantic
 replanning. For each executed command, verification extracts $\eta_n$ via
 \eqref{eq:verification_evidence} and uses $(\eta_n,\gamma)$ to update $z(n)$ and
 detect any $e_k$ via~\eqref{eq:verification_status}. A detected event triggers
@@ -168,7 +169,7 @@ $\mathbf{C}\gets()$\;
         Identify $\mathcal{N}_k^{\texttt{aff}}$
         by~\eqref{eq:affected_subtasks}\;
         Retain $G\setminus\mathcal{N}_k^{\texttt{aff}}$ and reconstruct
-        the affected subgraph using $\mathcal{F}$\;
+        the affected subgraph\;
         Commit $S_{\nu+1}^{\texttt{sem}}$
         by~\eqref{eq:semantic_state_update};
         $\nu\gets\nu+1$\;

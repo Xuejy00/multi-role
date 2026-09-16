@@ -26,6 +26,10 @@ safety stacks, and physical execution interface. Semantic calls use the LLM
 static and dynamic execution with task-relevant events \texttt{E1} (task
 update), \texttt{E2} (external disturbance), and \texttt{E3} (verified
 execution failure).
+For $\texttt{C2-E3}$, execution failure is induced by adding obstacles around
+the target object, such as stacking objects that block manipulation; for
+$\texttt{C4-E3}$, it is induced by substantially increasing conveyor speed,
+creating a dynamic physical disturbance.
 Each simulation condition contains 30 independent trials with randomly sampled
 initial object layouts; events are injected at 30\%--70\% of subtask-completion
 progress.
@@ -42,8 +46,8 @@ and the associated figures. Hardware conditions use 10 trials.
 
 The proposed loop maintained high completion across all tested regimes while
 changing only the event-relevant portion of the shared state. TSR was 30/30 in
-the static, task-update, and disturbance conditions and 27/30 in the two
-execution-failure conditions; SCR was 100\% except for 88.9\% in
+the static, task-update, and disturbance conditions, with 30/30 for
+$\texttt{C2-E3}$ and 27/30 for $\texttt{C4-E3}$; SCR was 100\% except for 88.9\% in
 \texttt{C4-E3}. The unsuccessful trials therefore occurred only under verified
 execution-failure conditions rather than ordinary motion or task updates.
 Figure~\ref{fig:event_graph_update} tracks the corresponding semantic-state
@@ -92,7 +96,8 @@ of Liu~\emph{et al.}~\cite{liu2025coherent} to the same interface.
 
 
 Ours retained 30/30 on all task-update
-and disturbance cases and 27/30 under execution failure, while every baseline
+and disturbance cases, with 30/30 for $\texttt{C2-E3}$ and 27/30 for
+$\texttt{C4-E3}$, while every baseline
 lost substantially more event trials.
 Table~\ref{tab:baseline_tsr} reports their
 condition-wise TSR, making the event-specific gap below directly comparable.

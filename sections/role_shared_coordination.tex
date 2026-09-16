@@ -61,8 +61,8 @@ $\mathcal{L}$ include the semantic dependencies from the dependency graph
 and manipulator-aware dependencies by $\mathcal{R}$.
 Thus, $G$ records what to execute, who executes it, and which skill
 is used. For $n\in\mathcal{N}$,
-$\operatorname{pred}(n)$ denotes the predecessor $j$ such that
-$(j,n)\in\mathcal{L}$.
+$\operatorname{pred}(n)\triangleq\{j\mid (j,n)\in\mathcal{L}\}$ denotes the set
+of predecessor nodes of $n$.
 
 \subsubsection{Execution Assessment and Status Tracking}
 The verification role maintains $z$ after command execution. For an executable
@@ -88,6 +88,6 @@ Section~\ref{sec:semantic_physical_coordination}. Without a task-relevant
 inconsistency, $e_k$ is null and only $z(n)$ is updated.
 Within $S_\nu^{\texttt{sem}}=(\gamma,G,\mathcal{F},z)$, the affordance,
 planning, and verification roles own $\mathcal{F}$, $G$, and $z$, respectively.
-An updated $\gamma$ enters as an external semantic constraint and is committed
-before role-specific updates. The intermediate graph is used
+For a task-update event, the externally updated instruction directly replaces
+the current $\gamma$ before role-specific semantic updates. The intermediate graph is used
 only to construct $G$, and $\eta_n$ remains transient verification evidence.
